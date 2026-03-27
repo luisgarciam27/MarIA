@@ -37,7 +37,7 @@ const Navbar = () => {
           <a href="#soluciones" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">Soluciones</a>
           <a href="#precios" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">Precios</a>
           <a href="#faq" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">FAQ</a>
-          <a href="https://wa.me/51999999999" className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
+          <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
             Quiero MarIA 💬
           </a>
         </div>
@@ -50,49 +50,48 @@ const Hero = () => (
   <section className="min-h-screen flex items-center justify-center pt-32 pb-24 px-6 relative overflow-hidden grad-bg text-center">
     <div className="absolute w-[600px] h-[600px] rounded-full bg-primary/10 blur-[80px] -top-24 -right-36 animate-drift" />
     <div className="absolute w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[80px] -bottom-20 -left-24 animate-drift [animation-direction:reverse]" />
-    <div className="absolute w-[300px] h-[300px] rounded-full bg-accent/10 blur-[60px] top-[40%] left-[40%] animate-drift [animation-delay:3s]" />
-
-    <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-      <div className="flex flex-col items-center gap-3 mb-10">
-        <div className="w-24 h-24 animate-float drop-shadow-2xl"><Logo /></div>
-        <div className="font-display text-5xl font-extrabold tracking-tighter text-text-main">Mar<em className="text-primary not-italic">IA</em></div>
+    
+    <div className="relative z-10 max-w-6xl mx-auto flex flex-col items-center">
+      <div className="flex flex-col items-center gap-3 mb-8">
+        <div className="w-20 h-20 animate-float drop-shadow-2xl"><Logo /></div>
+        <div className="font-display text-4xl font-extrabold tracking-tighter text-text-main">Mar<em className="text-primary not-italic">IA</em></div>
       </div>
 
       <div className="inline-flex items-center gap-2 bg-white border border-primary/15 shadow-sm text-primary text-xs font-semibold tracking-widest uppercase px-5 py-2 rounded-full mb-8">
         <div className="w-1.5 h-1.5 bg-secondary rounded-full animate-blink" />
-        Suite digital completa para negocios peruanos
+        La suite digital definitiva para emprendedores
       </div>
 
-      <h1 className="font-display text-5xl md:text-6xl lg:text-[5.5rem] font-extrabold leading-[1.02] tracking-tighter text-text-main mb-6">
-        <span className="text-primary">Tienda virtual.</span>
-        <span className="text-secondary-dark"> Bot inteligente.</span>
-        <span className="text-accent"> Panel potente.</span>
-        <span className="block font-serif italic font-normal text-[0.62em] text-text-muted tracking-tight mt-2">Todo integrado. Listo en 48 horas.</span>
+      <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tighter text-text-main mb-8">
+        Vende más, <span className="text-primary">atiende mejor</span><br/>
+        y recupera tu tiempo.
       </h1>
 
-      <p className="text-lg text-text-muted leading-relaxed max-w-2xl mx-auto mb-12">
-        <strong className="text-primary">MarIA</strong> transforma tu negocio en una operación digital profesional. Tu cliente compra en la tienda, el bot confirma el pedido y el panel te avisa. Automático, sin que toques el celular.
+      <p className="text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto mb-12">
+        MarIA es la inteligencia artificial que gestiona tu tienda, responde a tus clientes y organiza tus ventas. <strong className="text-primary">Todo en automático.</strong>
       </p>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-        <a href="https://wa.me/51999999999" className="btn-primary">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
+        <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="btn-primary">
           💬 Quiero MarIA para mi negocio
         </a>
         <a href="#soluciones" className="btn-secondary">
-          Ver las 3 soluciones →
+          Ver cómo funciona →
         </a>
       </div>
 
-      <div className="flex justify-center gap-10 flex-wrap pt-8 border-t border-primary/10 w-full">
+      {/* 4 Benefit Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
         {[
-          { n: "48h", l: "Tiempo instalación" },
-          { n: "24/7", l: "Bot activo siempre" },
-          { n: "S/350", l: "Desde este precio" },
-          { n: "15 días", l: "Garantía devolución" }
-        ].map((item, i) => (
-          <div key={i} className="text-center">
-            <div className="font-display text-3xl font-extrabold text-primary">{item.n}</div>
-            <div className="text-[0.7rem] text-text-light tracking-widest uppercase mt-1">{item.l}</div>
+          { i: "🚀", t: "Vende en automático", d: "Tu tienda abierta 24/7" },
+          { i: "🤖", t: "Atiende con IA", d: "Respuestas al instante" },
+          { i: "📊", t: "Control total", d: "Panel de ventas potente" },
+          { i: "⏱️", t: "Listo en 48h", d: "Instalación ultra rápida" }
+        ].map((card, i) => (
+          <div key={i} className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-primary/10 shadow-sm hover:shadow-md transition-all">
+            <div className="text-3xl mb-3">{card.i}</div>
+            <div className="font-bold text-sm text-text-main mb-1">{card.t}</div>
+            <div className="text-[0.7rem] text-text-muted uppercase tracking-wider">{card.d}</div>
           </div>
         ))}
       </div>
@@ -100,257 +99,203 @@ const Hero = () => (
   </section>
 );
 
-const Solutions = () => (
-  <section id="soluciones" className="py-24 bg-bg-main relative">
-    <div className="text-center px-6 max-w-3xl mx-auto mb-16">
-      <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-5">
-        Las 3 soluciones de MarIA
+const Problem = () => (
+  <section className="py-24 bg-white relative overflow-hidden">
+    <div className="container mx-auto px-6 max-w-5xl">
+      <div className="text-center mb-16">
+        <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-accent bg-accent-bg px-4 py-1.5 rounded-full border border-accent-light/15 mb-5">
+          El problema
+        </div>
+        <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main">
+          ¿Tu negocio está <em className="font-serif italic font-normal text-accent">estancado</em>?
+        </h2>
       </div>
-      <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.08] text-text-main mb-5">
-        Todo lo que tu negocio necesita,<br/><em className="font-serif italic font-normal text-primary">en un solo lugar</em>
-      </h2>
-      <p className="text-text-muted leading-relaxed">Tres herramientas poderosas, completamente integradas. Cuando un cliente compra en tu tienda, el bot lo confirma y el panel te avisa. Todo automático.</p>
+
+      <div className="grid md:grid-cols-3 gap-8">
+        {[
+          {
+            i: "📉",
+            t: "Sin tienda profesional",
+            d: "Vender por fotos sueltas en WhatsApp te hace ver informal y pierdes ventas por falta de confianza."
+          },
+          {
+            i: "🔍",
+            t: "No apareces en Google",
+            d: "Si un cliente busca lo que vendes y no te encuentra, le está comprando a tu competencia ahora mismo."
+          },
+          {
+            i: "😴",
+            t: "No atiendes 24/7",
+            d: "Si tardas más de 5 minutos en responder, el cliente ya se fue. No puedes estar pegado al celular todo el día."
+          }
+        ].map((item, i) => (
+          <div key={i} className="bg-bg-main p-8 rounded-3xl border border-primary/5 relative group hover:border-accent/20 transition-all">
+            <div className="text-4xl mb-6">{item.i}</div>
+            <h3 className="font-bold text-xl text-text-main mb-4">{item.t}</h3>
+            <p className="text-sm text-text-muted leading-relaxed">{item.d}</p>
+          </div>
+        ))}
+      </div>
     </div>
+  </section>
+);
 
-    <div className="container mx-auto px-6 max-w-6xl flex flex-col gap-12">
-      {/* Sol 1: Tienda */}
-      <div className="bg-white rounded-[28px] overflow-hidden grid md:grid-cols-2 min-h-[520px] relative shadow-[0_4px_40px_rgba(30,27,75,0.06)] border border-primary/10 border-t-[3px] border-t-primary hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(30,27,75,0.1)] transition-all duration-300">
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-primary/5 blur-[60px] -right-24 top-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="p-10 md:p-12 flex flex-col justify-center relative z-10">
-          <div className="text-[0.62rem] font-bold tracking-[0.25em] uppercase text-text-light mb-4">01 · Primera solución</div>
-          <div className="inline-flex items-center gap-2.5 bg-primary-bg border border-primary/20 rounded-2xl px-4 py-2.5 mb-6 w-fit">
-            <div className="w-8 h-8"><Logo /></div>
-            <span className="text-xs font-bold tracking-widest uppercase text-primary">Tienda Virtual</span>
+const HowItWorks = () => (
+  <section className="py-24 grad-bg relative overflow-hidden">
+    <div className="container mx-auto px-6 max-w-5xl">
+      <div className="text-center mb-16">
+        <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-5">
+          ¿Cómo funciona MarIA?
+        </div>
+        <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main">
+          Tu negocio en <em className="font-serif italic font-normal text-primary">piloto automático</em>
+        </h2>
+      </div>
+
+      <div className="grid md:grid-cols-4 gap-6">
+        {[
+          { n: "01", t: "El cliente entra", d: "Visita tu tienda profesional desde Instagram, Facebook o Google." },
+          { n: "02", t: "MarIA atiende", d: "Responde dudas y toma el pedido por WhatsApp al instante." },
+          { n: "03", t: "Pago rápido", d: "El cliente paga con Yape o Plin y envía el comprobante." },
+          { n: "04", t: "Tú solo despachas", d: "Recibes el pedido listo en tu panel. ¡Venta cerrada!" }
+        ].map((step, i) => (
+          <div key={i} className="bg-white p-8 rounded-[32px] border border-primary/5 shadow-sm relative">
+            <div className="font-display text-4xl font-black text-primary/10 absolute top-6 right-8">{step.n}</div>
+            <h3 className="font-bold text-lg text-text-main mb-3 mt-4">{step.t}</h3>
+            <p className="text-sm text-text-muted leading-relaxed">{step.d}</p>
           </div>
-          <h3 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.08] text-text-main mb-4">
-            Tienda Virtual<br/><em className="not-italic text-primary">Super Profesional</em>
-          </h3>
-          <p className="text-sm text-text-muted leading-relaxed mb-6">Tu negocio merece una tienda que convierta visitas en ventas. Catálogo visual impecable, carrito de compras, pago con Yape y Plin, perfecta en celular.</p>
-          <ul className="flex flex-col gap-2.5">
-            {[
-              "Catálogo con foto, precio y descripción",
-              "Carrito de compras con total automático",
-              "Pago directo con Yape y Plin",
-              "Filtros por categoría y buscador",
-              "Diseño 100% responsive en celular",
-              "URL propia: tunegocio.maria.pe"
-            ].map((f, i) => (
-              <li key={i} className="flex items-center gap-2.5 text-sm text-gray-700">
-                <span className="w-5 h-5 rounded-full bg-primary-bg text-primary flex items-center justify-center text-[0.6rem] font-extrabold shrink-0">✓</span>
-                {f}
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Pillars = () => (
+  <section id="soluciones" className="py-24 bg-white">
+    <div className="container mx-auto px-6 max-w-6xl">
+      <div className="text-center mb-20">
+        <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-5">
+          Los 4 Pilares de MarIA
+        </div>
+        <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main">
+          La tecnología que <em className="font-serif italic font-normal text-primary">hace crecer</em> tu empresa
+        </h2>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-12">
+        {/* Pillar 1: Tienda */}
+        <div className="bg-bg-main rounded-[40px] p-10 border border-primary/5 hover:border-primary/20 transition-all group">
+          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">🛍️</div>
+          <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">Tienda Virtual</h3>
+          <p className="text-text-muted leading-relaxed mb-6">Un catálogo profesional que enamora a tus clientes. Carrito de compras, filtros y buscador inteligente.</p>
+          <ul className="space-y-3">
+            {["Catálogo interactivo", "Carrito de compras", "Pago con Yape/Plin"].map((item, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
+                <CheckCircle2 className="w-5 h-5 text-primary" /> {item}
               </li>
             ))}
           </ul>
         </div>
-        <div className="p-10 relative z-10 flex items-center justify-center grad-bg">
-          <div className="bg-white rounded-2xl overflow-hidden w-full shadow-[0_8px_32px_rgba(124,58,237,0.1)] border border-primary/10">
-            <div className="bg-[#F9F8FF] p-3 flex items-center gap-1.5 border-b border-primary/10">
-              <div className="w-2 h-2 rounded-full bg-[#FF5F57]" />
-              <div className="w-2 h-2 rounded-full bg-[#FEBC2E]" />
-              <div className="w-2 h-2 rounded-full bg-[#28C840]" />
-              <div className="flex-1 bg-primary/5 rounded px-2.5 py-1 text-[0.62rem] text-text-light ml-2">🔒 donpepe.maria.pe</div>
-            </div>
-            <div className="p-3.5">
-              <div className="bg-gradient-to-r from-primary-bg to-primary-bg/30 rounded-xl p-3 mb-3 flex items-center justify-between">
-                <div>
-                  <div className="font-serif text-base italic text-primary">Cevichería Don Pepe</div>
-                  <div className="text-[0.56rem] text-text-light mt-0.5">🛵 Delivery · Los Olivos</div>
-                </div>
-                <div className="text-[0.56rem] bg-secondary text-white px-2 py-1 rounded-full font-bold">ABIERTO</div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mb-2.5">
-                {[
-                  { i: "🐟", n: "Ceviche Clásico", p: "S/ 28" },
-                  { i: "🦐", n: "Ceviche Mixto", p: "S/ 38" },
-                  { i: "🍲", n: "Arroz Mariscos", p: "S/ 32" },
-                  { i: "🐙", n: "Pulpo al Olivo", p: "S/ 45" }
-                ].map((p, i) => (
-                  <div key={i} className="bg-bg-main rounded-lg overflow-hidden border border-primary/5">
-                    <div className="h-12 flex items-center justify-center text-xl bg-primary-bg">{p.i}</div>
-                    <div className="p-2">
-                      <div className="text-[0.6rem] font-semibold mb-1 text-text-main">{p.n}</div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[0.65rem] text-primary font-bold">{p.p}</span>
-                        <span className="text-[0.5rem] bg-primary rounded-full px-2 py-1 text-white font-bold">+ Add</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-text-main rounded-lg p-2.5 flex items-center justify-between">
-                <div>
-                  <div className="text-[0.65rem] font-bold text-white">🛒 2 productos · S/ 66</div>
-                  <div className="text-[0.55rem] text-primary-light">💜 Pagar con Yape / Plin</div>
-                </div>
-                <div className="text-sm text-white">→</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent mx-8" />
-
-      {/* Sol 2: Bot */}
-      <div className="bg-white rounded-[28px] overflow-hidden grid md:grid-cols-2 min-h-[520px] relative shadow-[0_4px_40px_rgba(30,27,75,0.06)] border border-primary/10 border-t-[3px] border-t-secondary-dark hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(30,27,75,0.1)] transition-all duration-300">
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[60px] -left-24 top-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="p-10 relative z-10 flex items-center justify-center grad-bg order-2 md:order-1">
-          <div className="bg-white rounded-[26px] overflow-hidden w-[220px] shadow-[0_24px_60px_rgba(124,58,237,0.15)] border-[1.5px] border-primary/10">
-            <div className="bg-[#F9F8FF] p-2 flex justify-center border-b border-primary/5">
-              <div className="w-12 h-1 bg-primary-light rounded opacity-40" />
-            </div>
-            <div className="bg-primary p-2.5 flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center shrink-0"><div className="w-5 h-5"><Logo /></div></div>
-              <div>
-                <div className="text-[0.7rem] font-bold text-white">MarIA 🚀 · Don Pepe</div>
-                <div className="text-[0.58rem] text-white/65">● en línea ahora</div>
-              </div>
-            </div>
-            <div className="bg-[#F3F4F6] p-2 min-h-[200px] flex flex-col gap-1.5">
-              <div className="max-w-[86%] p-2 rounded-md text-[0.62rem] leading-relaxed bg-white rounded-tl-none self-start text-text-main shadow-sm">
-                ¡Hola! Soy <b>MarIA</b> 🚀<br/>¿En qué te ayudo?<br/>1️⃣ Carta 2️⃣ Pedido 3️⃣ Precios
-              </div>
-              <div className="max-w-[86%] p-2 rounded-md text-[0.62rem] leading-relaxed bg-primary rounded-tr-none self-end text-white">
-                cuánto cuesta el ceviche?
-              </div>
-              <div className="max-w-[86%] p-2 rounded-md text-[0.62rem] leading-relaxed bg-white rounded-tl-none self-start text-text-main shadow-sm">
-                🐟 Clásico <b>S/ 28</b><br/>🦐 Mixto <b>S/ 38</b><br/>¿Te pedimos uno? 😊
-              </div>
-              <div className="max-w-[86%] p-2 rounded-md text-[0.62rem] leading-relaxed bg-primary rounded-tr-none self-end text-white">
-                sí el mixto con delivery!
-              </div>
-              <div className="max-w-[86%] p-2 rounded-md text-[0.62rem] leading-relaxed bg-white rounded-tl-none self-start text-text-main shadow-sm">
-                🎉 Total: <b>S/ 43</b><br/>💜 Yapea al 999-999-999<br/>🛵 Llega en 30-40 min
-              </div>
-            </div>
-            <div className="bg-white p-2 flex items-center gap-1.5 border-t border-primary/10">
-              <input className="flex-1 bg-bg-main rounded-full border border-primary/10 px-2.5 py-1 text-[0.6rem] outline-none text-text-main" placeholder="Escribe un mensaje..." />
-              <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-[0.65rem] shrink-0">➤</div>
-            </div>
-          </div>
+        {/* Pillar 2: Dashboard */}
+        <div className="bg-bg-main rounded-[40px] p-10 border border-secondary/5 hover:border-secondary/20 transition-all group">
+          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-secondary/20 group-hover:scale-110 transition-transform">📊</div>
+          <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">Panel Admin</h3>
+          <p className="text-text-muted leading-relaxed mb-6">Control total de tus ventas, clientes y stock. Toma decisiones basadas en datos reales, no en suposiciones.</p>
+          <ul className="space-y-3">
+            {["Reportes de ventas", "Gestión de pedidos", "Base de clientes"].map((item, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
+                <CheckCircle2 className="w-5 h-5 text-secondary" /> {item}
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="p-10 md:p-12 flex flex-col justify-center relative z-10 order-1 md:order-2">
-          <div className="text-[0.62rem] font-bold tracking-[0.25em] uppercase text-text-light mb-4">02 · Segunda solución</div>
-          <div className="inline-flex items-center gap-2.5 bg-secondary-bg border border-secondary/30 rounded-2xl px-4 py-2.5 mb-6 w-fit">
-            <div className="w-8 h-8"><Logo /></div>
-            <span className="text-xs font-bold tracking-widest uppercase text-secondary-dark">Bot Inteligente</span>
-          </div>
-          <h3 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.08] text-text-main mb-4">
-            Bot que Responde<br/><em className="not-italic text-secondary-dark">por Ti — 24/7</em>
-          </h3>
-          <p className="text-sm text-text-muted leading-relaxed mb-6">MarIA atiende a tus clientes por WhatsApp las 24 horas sin que toques el celular. IA real que habla en español peruano, cálido y natural.</p>
-          <ul className="flex flex-col gap-2.5">
-            {[
-              "Responde preguntas de productos y precios",
-              "Toma pedidos completos y coordina el pago",
-              "Info de Yape, Plin y delivery automática",
-              "Habla en español peruano — natural y cálido",
-              "Te avisa cuando hay un pedido urgente",
-              "Activo 24h — incluso cuando estás durmiendo"
-            ].map((f, i) => (
-              <li key={i} className="flex items-center gap-2.5 text-sm text-gray-700">
-                <span className="w-5 h-5 rounded-full bg-secondary-bg text-secondary-dark flex items-center justify-center text-[0.6rem] font-extrabold shrink-0">✓</span>
-                {f}
+
+        {/* Pillar 3: Bot */}
+        <div className="bg-bg-main rounded-[40px] p-10 border border-accent/5 hover:border-accent/20 transition-all group">
+          <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-accent/20 group-hover:scale-110 transition-transform">💬</div>
+          <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">WhatsApp Bot</h3>
+          <p className="text-text-muted leading-relaxed mb-6">Inteligencia Artificial que atiende como un experto. Resuelve dudas, envía precios y cierra ventas 24/7.</p>
+          <ul className="space-y-3">
+            {["IA con tono peruano", "Atención 24/7", "Cierre de ventas"].map((item, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
+                <CheckCircle2 className="w-5 h-5 text-accent" /> {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Pillar 4: Google Maps */}
+        <div className="bg-bg-main rounded-[40px] p-10 border border-primary-dark/5 hover:border-primary-dark/20 transition-all group">
+          <div className="w-14 h-14 bg-primary-dark rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-primary-dark/20 group-hover:scale-110 transition-transform">📍</div>
+          <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">Google Maps</h3>
+          <p className="text-text-muted leading-relaxed mb-6">Aparece en los primeros resultados cuando alguien busque tu negocio. Atrae clientes locales a tu tienda física.</p>
+          <ul className="space-y-3">
+            {["Perfil optimizado", "Gestión de reseñas", "Mayor visibilidad local"].map((item, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
+                <CheckCircle2 className="w-5 h-5 text-primary-dark" /> {item}
               </li>
             ))}
           </ul>
         </div>
       </div>
+    </div>
+  </section>
+);
 
-      <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent mx-8" />
-
-      {/* Sol 3: Admin */}
-      <div className="bg-white rounded-[28px] overflow-hidden grid md:grid-cols-2 min-h-[520px] relative shadow-[0_4px_40px_rgba(30,27,75,0.06)] border border-primary/10 border-t-[3px] border-t-accent hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(30,27,75,0.1)] transition-all duration-300">
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-accent/5 blur-[60px] -right-24 top-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="p-10 md:p-12 flex flex-col justify-center relative z-10">
-          <div className="text-[0.62rem] font-bold tracking-[0.25em] uppercase text-text-light mb-4">03 · Tercera solución</div>
-          <div className="inline-flex items-center gap-2.5 bg-accent-bg border border-accent-light/30 rounded-2xl px-4 py-2.5 mb-6 w-fit">
-            <div className="w-8 h-8"><Logo /></div>
-            <span className="text-xs font-bold tracking-widest uppercase text-accent">Panel Admin</span>
+const POS = () => (
+  <section className="py-24 grad-bg overflow-hidden">
+    <div className="container mx-auto px-6 max-w-6xl">
+      <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="relative">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 blur-3xl rounded-full" />
+          <div className="bg-white p-8 rounded-[40px] shadow-2xl border border-primary/5 relative z-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="font-display font-bold text-xl">Cierre de Caja</div>
+              <div className="text-secondary font-bold">S/ 1,450.00</div>
+            </div>
+            <div className="space-y-4 mb-8">
+              {[
+                { l: "Ventas Efectivo", v: "S/ 850.00" },
+                { l: "Ventas Yape/Plin", v: "S/ 600.00" },
+                { l: "Total Operaciones", v: "24" }
+              ].map((item, i) => (
+                <div key={i} className="flex justify-between text-sm border-b border-bg-main pb-3">
+                  <span className="text-text-muted">{item.l}</span>
+                  <span className="font-bold text-text-main">{item.v}</span>
+                </div>
+              ))}
+            </div>
+            <button className="w-full bg-text-main text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
+              🔒 Realizar Cierre de Caja
+            </button>
           </div>
-          <h3 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.08] text-text-main mb-4">
-            Panel de Control<br/><em className="not-italic text-accent">Súper Potente</em>
-          </h3>
-          <p className="text-sm text-text-muted leading-relaxed mb-6">Todo tu negocio en la palma de tu mano. Ventas en tiempo real, gestión de pedidos con un toque, catálogo editable y base de clientes que crece sola.</p>
-          <ul className="flex flex-col gap-2.5">
-            {[
-              "Dashboard: ventas del día, semana y mes",
-              "Gestión pedidos: nuevo → proceso → entregado",
-              "Edita productos y precios en segundos",
-              "Base de datos de clientes automática",
-              "Reportes y estadísticas de tu negocio",
-              "Configura a MarIA según tu temporada"
-            ].map((f, i) => (
-              <li key={i} className="flex items-center gap-2.5 text-sm text-gray-700">
-                <span className="w-5 h-5 rounded-full bg-accent-bg text-accent flex items-center justify-center text-[0.6rem] font-extrabold shrink-0">✓</span>
-                {f}
-              </li>
-            ))}
-          </ul>
         </div>
-        <div className="p-10 relative z-10 flex items-center justify-center grad-bg">
-          <div className="bg-white rounded-[18px] overflow-hidden w-full shadow-[0_8px_32px_rgba(244,114,182,0.1)] border border-accent-light/10">
-            <div className="bg-accent-bg p-2.5 flex items-center gap-1.5 border-b border-accent-light/10">
-              <div className="w-2 h-2 rounded-full bg-[#FF5F57]" />
-              <div className="w-2 h-2 rounded-full bg-[#FEBC2E]" />
-              <div className="w-2 h-2 rounded-full bg-[#28C840]" />
-              <div className="text-[0.62rem] text-text-muted ml-1.5 font-semibold">⚙️ Panel MarIA · Don Pepe</div>
-            </div>
-            <div className="grid grid-cols-[42px_1fr] min-h-[260px]">
-              <div className="bg-[#F9F8FF] py-2.5 border-r border-primary/5 flex flex-col items-center gap-1.5">
-                <div className="w-7 h-7 rounded-lg bg-primary-bg flex items-center justify-center text-[0.82rem]">📊</div>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem]">📦</div>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem]">🍽️</div>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem]">👥</div>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem]">🤖</div>
+        <div>
+          <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-5">
+            Para negocios físicos
+          </div>
+          <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main mb-6">
+            Punto de Venta <em className="font-serif italic font-normal text-primary">(POS)</em>
+          </h2>
+          <p className="text-lg text-text-muted leading-relaxed mb-8">
+            Si tienes un local físico, MarIA también es para ti. Gestiona tus ventas presenciales, controla tu inventario y realiza cierres de caja perfectos en segundos.
+          </p>
+          <div className="grid grid-cols-2 gap-6">
+            {[
+              { t: "Inventario", d: "Stock siempre al día" },
+              { t: "Boletas", d: "Rápidas y simples" },
+              { t: "Caja", d: "Control de ingresos" },
+              { t: "Multiusuario", d: "Para todo tu equipo" }
+            ].map((item, i) => (
+              <div key={i}>
+                <div className="font-bold text-text-main mb-1">{item.t}</div>
+                <div className="text-xs text-text-muted uppercase tracking-wider">{item.d}</div>
               </div>
-              <div className="p-3">
-                <div className="grid grid-cols-3 gap-1.5 mb-2.5">
-                  <div className="bg-bg-main rounded-lg p-2 border border-primary/5">
-                    <div className="font-display text-base font-extrabold text-primary">S/348</div>
-                    <div className="text-[0.52rem] text-text-light mt-px">Ventas hoy</div>
-                  </div>
-                  <div className="bg-bg-main rounded-lg p-2 border border-primary/5">
-                    <div className="font-display text-base font-extrabold text-secondary-dark">12</div>
-                    <div className="text-[0.52rem] text-text-light mt-px">Pedidos</div>
-                  </div>
-                  <div className="bg-bg-main rounded-lg p-2 border border-primary/5">
-                    <div className="font-display text-base font-extrabold text-accent">91%</div>
-                    <div className="text-[0.52rem] text-text-light mt-px">IA atendió</div>
-                  </div>
-                </div>
-                <div className="bg-bg-main rounded-lg p-2 mb-2 border border-primary/5">
-                  <div className="text-[0.52rem] text-text-light tracking-widest uppercase mb-1.5">Ventas esta semana</div>
-                  <div className="flex items-end gap-1 h-11">
-                    <div className="flex-1 rounded-t-sm bg-primary-bg h-[50%]" />
-                    <div className="flex-1 rounded-t-sm bg-primary-bg h-[64%]" />
-                    <div className="flex-1 rounded-t-sm bg-primary-bg h-[55%]" />
-                    <div className="flex-1 rounded-t-sm bg-primary-bg h-[88%]" />
-                    <div className="flex-1 rounded-t-sm bg-primary-bg h-[78%]" />
-                    <div className="flex-1 rounded-t-sm bg-primary h-full" />
-                    <div className="flex-1 rounded-t-sm bg-primary/10 h-[6%]" />
-                  </div>
-                </div>
-                <div className="bg-bg-main rounded-lg overflow-hidden border border-primary/5">
-                  <div className="grid grid-cols-[1fr_auto_auto] gap-1.5 p-1.5 bg-primary-bg text-primary font-bold text-[0.57rem]">
-                    <span>Pedido</span><span>Total</span><span>Estado</span>
-                  </div>
-                  <div className="grid grid-cols-[1fr_auto_auto] gap-1.5 p-1.5 border-b border-primary/5 text-[0.57rem] items-center text-text-main">
-                    <span>#P-041 · María R.</span><span>S/97</span><span className="bg-[#FDE8D8] text-[#C2440E] px-1.5 py-0.5 rounded-full font-bold text-[0.52rem]">Nuevo</span>
-                  </div>
-                  <div className="grid grid-cols-[1fr_auto_auto] gap-1.5 p-1.5 border-b border-primary/5 text-[0.57rem] items-center text-text-main">
-                    <span>#P-040 · Carlos M.</span><span>S/76</span><span className="bg-primary-bg text-primary px-1.5 py-0.5 rounded-full font-bold text-[0.52rem]">Proceso</span>
-                  </div>
-                  <div className="grid grid-cols-[1fr_auto_auto] gap-1.5 p-1.5 text-[0.57rem] items-center text-text-main">
-                    <span>#P-039 · Ana L.</span><span>S/100</span><span className="bg-secondary-bg text-secondary-dark px-1.5 py-0.5 rounded-full font-bold text-[0.52rem]">Listo ✓</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
-
     </div>
   </section>
 );
@@ -414,57 +359,83 @@ const Testimonials = () => (
 
 const Pricing = () => (
   <section id="precios" className="py-24 px-6 grad-bg">
-    <div className="max-w-4xl mx-auto text-center">
+    <div className="max-w-6xl mx-auto text-center">
       <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-4">
-        Oferta Exclusiva
+        Planes y Precios
       </div>
-      <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.08] text-text-main mb-6">
-        Un solo pago.<br/><em className="font-serif italic font-normal text-primary">Acceso de por vida.</em>
+      <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main mb-12">
+        Elige el plan ideal para <em className="font-serif italic font-normal text-primary">tu crecimiento</em>
       </h2>
-      <p className="text-lg text-text-muted mb-12 max-w-2xl mx-auto">
-        Olvídate de las mensualidades y comisiones abusivas. Obtén la suite completa de MarIA con un único pago y empieza a vender en automático hoy mismo.
-      </p>
       
-      <div className="bg-white rounded-[32px] p-8 md:p-12 relative transition-all duration-300 hover:shadow-[0_20px_50px_rgba(124,58,237,0.15)] border-2 border-primary max-w-2xl mx-auto">
-        <div className="absolute top-0 inset-x-0 bg-primary text-white text-center text-[0.75rem] font-extrabold tracking-widest py-2 rounded-t-[28px]">
-          ⭐ LICENCIA LIFETIME (PAGO ÚNICO)
-        </div>
-        
-        <div className="mt-6 mb-8">
-          <div className="font-display text-2xl font-extrabold tracking-tight text-text-main mb-2">Suite Completa MarIA</div>
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <span className="text-2xl text-text-light line-through font-bold">S/ 1,200</span>
-            <span className="font-display text-6xl font-extrabold text-primary tracking-tight">S/ 349</span>
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        {/* Plan Virtual */}
+        <div className="bg-white rounded-[40px] p-10 border border-primary/10 shadow-sm hover:shadow-xl transition-all relative overflow-hidden">
+          <div className="font-display text-2xl font-extrabold text-text-main mb-2">Plan Virtual</div>
+          <p className="text-sm text-text-muted mb-8">Para negocios que venden 100% online.</p>
+          <div className="flex items-baseline gap-2 mb-8 justify-center">
+            <span className="text-4xl font-extrabold text-primary">S/ 349</span>
+            <span className="text-xs text-text-light font-bold uppercase tracking-widest">Pago Único</span>
           </div>
-          <div className="text-sm text-secondary-dark font-bold bg-secondary-bg inline-block px-3 py-1 rounded-full">
-            ¡Ahorras S/ 851 hoy!
-          </div>
+          <ul className="text-left space-y-4 mb-10">
+            {["Tienda Virtual completa", "Bot WhatsApp Básico", "Panel de Administración", "URL maria.pe/tunegocio", "Soporte técnico"].map((f, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
+                <CheckCircle2 className="w-5 h-5 text-primary" /> {f}
+              </li>
+            ))}
+          </ul>
+          <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="btn-primary w-full">Elegir Plan Virtual</a>
         </div>
 
-        <div className="h-px bg-primary/10 my-8" />
-        
-        <div className="grid sm:grid-cols-2 gap-4 text-left mb-10">
+        {/* Plan Completo */}
+        <div className="bg-text-main rounded-[40px] p-10 border border-primary/20 shadow-2xl relative overflow-hidden transform md:scale-105 z-10">
+          <div className="absolute top-0 right-0 bg-primary text-white text-[0.6rem] font-bold px-4 py-1.5 rounded-bl-2xl uppercase tracking-widest">Recomendado</div>
+          <div className="font-display text-2xl font-extrabold text-white mb-2">Plan Completo</div>
+          <p className="text-sm text-white/60 mb-8">Para negocios con local físico y ambición.</p>
+          <div className="flex items-baseline gap-2 mb-8 justify-center">
+            <span className="text-4xl font-extrabold text-white">Consultar</span>
+          </div>
+          <ul className="text-left space-y-4 mb-10">
+            {["Todo lo del Plan Virtual", "Punto de Venta (POS)", "Google Maps Optimizado", "Bot WhatsApp Avanzado", "Capacitación VIP"].map((f, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm font-medium text-white">
+                <CheckCircle2 className="w-5 h-5 text-secondary" /> {f}
+              </li>
+            ))}
+          </ul>
+          <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="bg-primary hover:bg-primary-dark text-white w-full py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">Consultar por WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const Process = () => (
+  <section className="py-24 bg-white">
+    <div className="container mx-auto px-6 max-w-5xl">
+      <div className="text-center mb-16">
+        <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-5">
+          El Proceso
+        </div>
+        <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main">
+          De cero a digital en <em className="font-serif italic font-normal text-primary">5 pasos</em>
+        </h2>
+      </div>
+
+      <div className="relative">
+        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary/5 -translate-y-1/2 hidden md:block" />
+        <div className="grid md:grid-cols-5 gap-8 relative z-10">
           {[
-            "Catálogo digital interactivo",
-            "Bot WhatsApp 24/7 (Básico)",
-            "Info Yape/Plin automática",
-            "URL: maria.pe/tunegocio",
-            "Carrito de compras integrado",
-            "Panel de administración total",
-            "El mejor vendedor para enganchar a tus clientes",
-            "Soporte técnico incluido"
-          ].map((f, j) => (
-            <div key={j} className="flex items-start gap-3 text-sm text-gray-800 font-medium leading-relaxed">
-              <span className="text-secondary-dark font-bold shrink-0 text-lg leading-none">✓</span> {f}
+            { n: "1", t: "Contacto", d: "Hablamos por WhatsApp sobre tu negocio." },
+            { n: "2", t: "Configuración", d: "Armamos tu tienda y entrenamos a tu bot." },
+            { n: "3", t: "Capacitación", d: "Te enseñamos a usar tu nuevo panel." },
+            { n: "4", t: "Pruebas", d: "Validamos que todo funcione perfecto." },
+            { n: "5", t: "Lanzamiento", d: "¡Empiezas a vender en automático!" }
+          ].map((step, i) => (
+            <div key={i} className="text-center">
+              <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-6 shadow-lg shadow-primary/20">{step.n}</div>
+              <h3 className="font-bold text-text-main mb-2">{step.t}</h3>
+              <p className="text-xs text-text-muted leading-relaxed">{step.d}</p>
             </div>
           ))}
-        </div>
-        
-        <a href="https://wa.me/51999999999?text=Hola!%20Quiero%20aprovechar%20la%20oferta%20de%20S/349%20pago%20único" className="block w-full text-center py-5 rounded-full text-lg font-bold transition-all bg-primary text-white hover:bg-primary-dark hover:-translate-y-1 shadow-xl shadow-primary/30">
-          🚀 QUIERO MI SISTEMA AHORA
-        </a>
-        <div className="mt-4 text-xs text-text-muted font-medium">
-          Pago 100% seguro. Activación en 48 horas.
         </div>
       </div>
     </div>
@@ -533,14 +504,14 @@ const CTA = () => (
         ¿Listo para que tu negocio trabaje solo?
       </h2>
       <p className="text-text-muted leading-relaxed mb-10">
-        En <strong className="text-primary">48 horas</strong> tienes tu tienda virtual, tu bot y tu panel funcionando. Sin conocimientos técnicos. Con garantía de devolución.
+        En <strong className="text-primary">48 horas</strong> tienes tu suite completa funcionando. Sin conocimientos técnicos. Con garantía de devolución.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="https://wa.me/51999999999" className="btn-primary">
+        <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="btn-primary">
           💬 Empezar ahora por WhatsApp
         </a>
         <a href="#precios" className="btn-secondary">
-          Ver precios →
+          Ver planes →
         </a>
       </div>
       <div className="mt-6 text-xs text-text-light">
@@ -567,21 +538,67 @@ const Footer = () => (
   </footer>
 );
 
+const WhatsAppWidget = () => {
+  const [currentMessage, setCurrentMessage] = useState(0);
+  const messages = [
+    "¡Hola! Soy MarIA 🚀 ¿Te ayudo?",
+    "¿Quieres ver una demo en vivo? ✨",
+    "Atiendo a 14 negocios ahora mismo 📈",
+    "¡Digitaliza tu local en 48 horas! ⏱️"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentMessage((prev) => (prev + 1) % messages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentMessage}
+          initial={{ opacity: 0, y: 10, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.9 }}
+          className="bg-white px-4 py-2.5 rounded-2xl rounded-br-none shadow-xl border border-primary/10 text-xs font-bold text-text-main relative mb-1"
+        >
+          {messages[currentMessage]}
+          <div className="absolute -bottom-2 right-0 w-4 h-4 bg-white border-r border-b border-primary/10 rotate-45" />
+        </motion.div>
+      </AnimatePresence>
+      
+      <div className="relative">
+        <div className="absolute -top-1 -right-1 w-4 h-4 bg-secondary rounded-full border-2 border-white z-10 animate-pulse" />
+        <a 
+          href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." 
+          className="w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center text-3xl shadow-[0_12px_40px_rgba(37,211,102,0.4)] hover:scale-110 transition-all active:scale-95 group"
+        >
+          <MessageCircle className="w-8 h-8 text-white fill-white/10 group-hover:rotate-12 transition-transform" />
+        </a>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <div className="min-h-screen bg-bg-main selection:bg-primary/20 selection:text-primary">
       <Navbar />
       <Hero />
-      <Solutions />
+      <Problem />
+      <HowItWorks />
+      <Pillars />
+      <POS />
       <Numbers />
       <Testimonials />
       <Pricing />
+      <Process />
       <FAQ />
       <CTA />
       <Footer />
-      <a href="https://wa.me/51999999999" className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-2xl shadow-[0_8px_28px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform animate-[waPulse_2.5s_infinite]">
-        💬
-      </a>
+      <WhatsAppWidget />
     </div>
   );
 }
