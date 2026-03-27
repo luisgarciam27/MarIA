@@ -16,7 +16,7 @@ const Logo = () => (
   </svg>
 );
 
-const Navbar = () => {
+const Navbar = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -37,16 +37,16 @@ const Navbar = () => {
           <a href="#soluciones" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">Soluciones</a>
           <a href="#precios" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">Precios</a>
           <a href="#faq" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">FAQ</a>
-          <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
+          <button onClick={onOpenWhatsApp} className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
             Quiero MarIA 💬
-          </a>
+          </button>
         </div>
       </div>
     </nav>
   );
 };
 
-const Hero = () => (
+const Hero = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => (
   <section className="min-h-screen flex items-center justify-center pt-32 pb-24 px-6 relative overflow-hidden grad-bg text-center">
     <div className="absolute w-[600px] h-[600px] rounded-full bg-primary/10 blur-[80px] -top-24 -right-36 animate-drift" />
     <div className="absolute w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[80px] -bottom-20 -left-24 animate-drift [animation-direction:reverse]" />
@@ -72,9 +72,9 @@ const Hero = () => (
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
-        <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="btn-primary">
+        <button onClick={onOpenWhatsApp} className="btn-primary">
           💬 Quiero MarIA para mi negocio
-        </a>
+        </button>
         <a href="#soluciones" className="btn-secondary">
           Ver cómo funciona →
         </a>
@@ -243,7 +243,108 @@ const Pillars = () => (
   </section>
 );
 
+const WhatsAppCatalog = () => {
+  const products = [
+    { name: "Cebiche Clásico", price: "S/ 35.00", image: "https://picsum.photos/seed/cebiche/400/400" },
+    { name: "Lomo Saltado", price: "S/ 42.00", image: "https://picsum.photos/seed/lomo/400/400" },
+    { name: "Arroz con Mariscos", price: "S/ 38.00", image: "https://picsum.photos/seed/mariscos/400/400" },
+    { name: "Chicha Morada 1L", price: "S/ 15.00", image: "https://picsum.photos/seed/chicha/400/400" },
+  ];
+
+  return (
+    <section className="py-24 bg-bg-main overflow-hidden">
+      <div className="container mx-auto px-6 max-w-6xl">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="order-2 md:order-1">
+            <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-5">
+              Tu tienda en WhatsApp
+            </div>
+            <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-text-main mb-6">
+              Catálogo <em className="font-serif italic font-normal text-primary">Interactivo</em>
+            </h2>
+            <p className="text-lg text-text-muted leading-relaxed mb-8">
+              Tus clientes podrán navegar por tus productos con fotos reales, precios actualizados y descripciones tentadoras. MarIA se encarga de mostrarlo todo de forma profesional.
+            </p>
+            <div className="space-y-6">
+              {[
+                { t: "Sincronización Real", d: "Cambia un precio en tu panel y se actualiza en WhatsApp al instante." },
+                { t: "Categorías Inteligentes", d: "Organiza tus productos por tipo para una navegación fluida." },
+                { t: "Carrito Integrado", d: "El cliente selecciona lo que quiere y MarIA genera el pedido final." }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center shrink-0 mt-1">
+                    <CheckCircle2 className="w-4 h-4 text-secondary" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-text-main text-sm">{item.t}</div>
+                    <div className="text-xs text-text-muted">{item.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="order-1 md:order-2 relative flex justify-center">
+            {/* Phone Mockup */}
+            <div className="w-[300px] h-[600px] bg-text-main rounded-[3rem] border-[8px] border-text-main shadow-2xl relative overflow-hidden">
+              {/* WhatsApp Header */}
+              <div className="bg-[#075E54] p-4 pt-8 text-white flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-lg"><Logo /></div>
+                <div>
+                  <div className="text-xs font-bold">MarIA - Tu Restaurante</div>
+                  <div className="text-[0.6rem] opacity-70">En línea</div>
+                </div>
+              </div>
+              
+              {/* WhatsApp Content */}
+              <div className="bg-[#E5DDD5] h-full p-3 overflow-y-auto pb-20">
+                <div className="bg-white rounded-lg p-2 shadow-sm mb-4 text-[0.7rem] max-w-[85%]">
+                  ¡Hola! 👋 Aquí tienes nuestra carta de hoy. ¿Qué te gustaría pedir?
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  {products.map((p, i) => (
+                    <div key={i} className="bg-white rounded-lg overflow-hidden shadow-sm border border-black/5">
+                      <img src={p.image} alt={p.name} className="w-full h-24 object-cover" referrerPolicy="no-referrer" />
+                      <div className="p-2">
+                        <div className="text-[0.65rem] font-bold truncate">{p.name}</div>
+                        <div className="text-[0.6rem] text-secondary font-bold">{p.price}</div>
+                        <button className="w-full mt-1 bg-primary/10 text-primary text-[0.55rem] font-bold py-1 rounded">
+                          Añadir +
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-4 bg-[#DCF8C6] rounded-lg p-2 shadow-sm ml-auto text-[0.7rem] max-w-[85%]">
+                  Quiero un Cebiche Clásico y una Chicha Morada por favor.
+                </div>
+              </div>
+              
+              {/* WhatsApp Input */}
+              <div className="absolute bottom-0 left-0 right-0 bg-white p-3 flex gap-2 items-center">
+                <div className="flex-1 bg-bg-main rounded-full px-3 py-1.5 text-[0.6rem] text-text-light">Escribe un mensaje...</div>
+                <div className="w-8 h-8 bg-[#128C7E] rounded-full flex items-center justify-center text-white">
+                  <MessageCircle className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+            
+            {/* Floating Elements */}
+            <div className="absolute -top-6 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-primary/10 animate-float">
+              <div className="text-xs font-bold text-text-main mb-1">Nuevo Pedido! 🔔</div>
+              <div className="text-[0.6rem] text-text-muted">Mesa 4 · S/ 50.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const POS = () => (
+
   <section className="py-24 grad-bg overflow-hidden">
     <div className="container mx-auto px-6 max-w-6xl">
       <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -357,7 +458,7 @@ const Testimonials = () => (
   </section>
 );
 
-const Pricing = () => (
+const Pricing = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => (
   <section id="precios" className="py-24 px-6 grad-bg">
     <div className="max-w-6xl mx-auto text-center">
       <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-4">
@@ -383,7 +484,7 @@ const Pricing = () => (
               </li>
             ))}
           </ul>
-          <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="btn-primary w-full">Elegir Plan Virtual</a>
+          <button onClick={onOpenWhatsApp} className="btn-primary w-full">Elegir Plan Virtual</button>
         </div>
 
         {/* Plan Completo */}
@@ -401,7 +502,7 @@ const Pricing = () => (
               </li>
             ))}
           </ul>
-          <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="bg-primary hover:bg-primary-dark text-white w-full py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">Consultar por WhatsApp</a>
+          <button onClick={onOpenWhatsApp} className="bg-primary hover:bg-primary-dark text-white w-full py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">Consultar por WhatsApp</button>
         </div>
       </div>
     </div>
@@ -453,20 +554,20 @@ const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-24 px-6 bg-white">
-      <div className="max-w-5xl mx-auto text-center">
+    <section id="faq" className="py-24 px-6 bg-bg-main">
+      <div className="max-w-6xl mx-auto text-center">
         <div className="inline-block text-[0.7rem] font-bold tracking-[0.2em] uppercase text-primary bg-primary-bg px-4 py-1.5 rounded-full border border-primary/15 mb-4">
           Preguntas frecuentes
         </div>
         <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.08] text-text-main mb-12">
           Resolvemos tus<br/><em className="font-serif italic font-normal text-primary">dudas ahora</em>
         </h2>
-        <div className="max-w-2xl mx-auto text-left">
+        <div className="grid md:grid-cols-2 gap-6 text-left">
           {faqs.map((faq, i) => (
-            <div key={i} className="border-b border-primary/10">
+            <div key={i} className="bg-white rounded-2xl border border-primary/10 p-6 shadow-sm hover:shadow-md transition-all">
               <button 
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full py-5 flex items-center justify-between text-left font-semibold text-[0.92rem] text-text-main hover:text-primary transition-colors gap-3"
+                className="w-full flex items-center justify-between text-left font-semibold text-[0.95rem] text-text-main hover:text-primary transition-colors gap-3"
               >
                 {faq.q}
                 <span className="text-primary text-lg shrink-0">{openIndex === i ? '−' : '+'}</span>
@@ -479,7 +580,7 @@ const FAQ = () => {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <p className="pb-5 text-sm text-text-muted leading-relaxed">{faq.a}</p>
+                    <p className="pt-4 text-sm text-text-muted leading-relaxed">{faq.a}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -491,7 +592,7 @@ const FAQ = () => {
   );
 };
 
-const CTA = () => (
+const CTA = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => (
   <section className="py-32 px-6 text-center grad-bg relative overflow-hidden">
     <div className="absolute w-[500px] h-[500px] rounded-full bg-primary/10 blur-[80px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
     <div className="relative z-10 max-w-3xl mx-auto">
@@ -507,9 +608,9 @@ const CTA = () => (
         En <strong className="text-primary">48 horas</strong> tienes tu suite completa funcionando. Sin conocimientos técnicos. Con garantía de devolución.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." className="btn-primary">
+        <button onClick={onOpenWhatsApp} className="btn-primary">
           💬 Empezar ahora por WhatsApp
-        </a>
+        </button>
         <a href="#precios" className="btn-secondary">
           Ver planes →
         </a>
@@ -538,11 +639,12 @@ const Footer = () => (
   </footer>
 );
 
-const WhatsAppWidget = () => {
+const WhatsAppWidget = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => {
   const [currentMessage, setCurrentMessage] = useState(0);
   const messages = [
     "¡Hola! Soy MarIA 🚀 ¿Te ayudo?",
     "¿Quieres ver una demo en vivo? ✨",
+    "Mira cómo se ve tu carta en WhatsApp 📱",
     "Atiendo a 14 negocios ahora mismo 📈",
     "¡Digitaliza tu local en 48 horas! ⏱️"
   ];
@@ -571,34 +673,76 @@ const WhatsAppWidget = () => {
       
       <div className="relative">
         <div className="absolute -top-1 -right-1 w-4 h-4 bg-secondary rounded-full border-2 border-white z-10 animate-pulse" />
-        <a 
-          href="https://wa.me/51999999999?text=Hola%20MarIA!%20🚀%20Vengo%20de%20la%20web%20y%20quiero%20ver%20la%20%23DEMO_MARAVILLA%20para%20mi%20negocio." 
+        <button 
+          onClick={onOpenWhatsApp}
           className="w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center text-3xl shadow-[0_12px_40px_rgba(37,211,102,0.4)] hover:scale-110 transition-all active:scale-95 group"
         >
           <MessageCircle className="w-8 h-8 text-white fill-white/10 group-hover:rotate-12 transition-transform" />
-        </a>
+        </button>
       </div>
     </div>
   );
 };
 
+const WhatsAppModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  if (!isOpen) return null;
+
+  const options = [
+    { text: "🚀 ¡Quiero mi tienda MarIA ya!", msg: "Hola! Estoy listo para llevar mi negocio al siguiente nivel con MarIA. ¡Quiero mi tienda ya!" },
+    { text: "✨ Ver una demo en vivo", msg: "Hola! Me encantaría ver cómo funciona MarIA en vivo. ¿Me muestran una demo?" },
+    { text: "💼 ¿Cómo funciona para mi negocio?", msg: "Hola! Tengo dudas sobre cómo MarIA puede ayudar a mi negocio. ¿Me explican?" },
+    { text: "💬 Quiero hablar con un asesor", msg: "Hola! Me gustaría hablar con un asesor para empezar." }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-primary/10"
+      >
+        <h3 className="font-display text-2xl font-bold text-text-main mb-6">¿En qué te puedo ayudar?</h3>
+        <div className="space-y-3">
+          {options.map((opt, i) => (
+            <a 
+              key={i}
+              href={`https://wa.me/51975736687?text=${encodeURIComponent(opt.msg)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full p-4 rounded-xl bg-bg-main hover:bg-primary/10 border border-primary/5 hover:border-primary/20 transition-all text-sm font-bold text-text-main"
+            >
+              {opt.text}
+            </a>
+          ))}
+        </div>
+        <button onClick={onClose} className="w-full mt-6 text-xs text-text-muted hover:text-text-main">Cancelar</button>
+      </motion.div>
+    </div>
+  );
+};
+
 export default function App() {
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-bg-main selection:bg-primary/20 selection:text-primary">
-      <Navbar />
-      <Hero />
+      <WhatsAppModal isOpen={isWhatsAppModalOpen} onClose={() => setIsWhatsAppModalOpen(false)} />
+      <Navbar onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
+      <Hero onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
       <Problem />
       <HowItWorks />
       <Pillars />
+      <WhatsAppCatalog />
       <POS />
       <Numbers />
       <Testimonials />
-      <Pricing />
+      <Pricing onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
       <Process />
       <FAQ />
-      <CTA />
+      <CTA onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
       <Footer />
-      <WhatsAppWidget />
+      <WhatsAppWidget onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
     </div>
   );
 }
