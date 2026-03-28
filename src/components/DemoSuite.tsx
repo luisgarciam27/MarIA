@@ -22,7 +22,14 @@ import {
   Minus,
   X,
   Menu,
-  Users
+  Users,
+  Copy,
+  QrCode,
+  CreditCard,
+  Zap,
+  MessageSquare,
+  Workflow,
+  Brain
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -77,6 +84,15 @@ const TiendaView = () => {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'payment'>('cart');
+  const [selectedPayment, setSelectedPayment] = useState<'yape' | 'plin' | 'bcp' | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   const products = [
     // --- COMIDA ---
@@ -176,7 +192,7 @@ const TiendaView = () => {
       id: 12, 
       name: "Manta de Algodón", 
       price: 120, 
-      image: "https://images.unsplash.com/photo-1580302200322-22081c16b457?w=800&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=800&auto=format&fit=crop", 
       category: "Hogar",
       description: "Tejido suave 100% algodón orgánico. Perfecta para el sofá, disponible en tonos tierra."
     },
@@ -186,7 +202,7 @@ const TiendaView = () => {
       id: 13, 
       name: "Cama Ortopédica", 
       price: 165, 
-      image: "https://images.unsplash.com/photo-1591584539485-1524b31774fd?w=800&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&auto=format&fit=crop", 
       category: "Mascotas",
       description: "Espuma viscoelástica para el soporte de articulaciones. Funda lavable y base antideslizante."
     },
@@ -270,13 +286,49 @@ const TiendaView = () => {
       id: 21, 
       name: "Adidas Samba OG", 
       price: 450, 
-      image: "https://images.unsplash.com/photo-1626379616459-b2ce1d9decbb?w=800&auto=format&fit=crop", 
+      image: "https://images.unsplash.com/photo-1539185441755-769473a23570?w=800&auto=format&fit=crop", 
       category: "Zapatillas",
       description: "Un ícono del fútbol sala convertido en leyenda urbana. Cuero premium y suela de caucho color caramelo.",
       hasSizes: true,
       hasColors: true,
       sizes: ["38", "39", "40", "41", "42", "43"],
       colors: ["Blanco/Negro", "Negro/Blanco", "Verde/Blanco"]
+    },
+    { 
+      id: 22, 
+      name: "Nike Air Force 1", 
+      price: 480, 
+      image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop", 
+      category: "Zapatillas",
+      description: "El clásico de clásicos. Amortiguación Air y estilo atemporal en cuero blanco.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["38", "39", "40", "41", "42", "43", "44"],
+      colors: ["Blanco", "Negro", "Gris"]
+    },
+    { 
+      id: 23, 
+      name: "New Balance 550", 
+      price: 520, 
+      image: "https://images.unsplash.com/photo-1626379616459-b2ce1d9decbb?w=800&auto=format&fit=crop", 
+      category: "Zapatillas",
+      description: "Estilo retro de básquetbol de los 80. Comodidad y diseño premium para el día a día.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["39", "40", "41", "42", "43"],
+      colors: ["Blanco/Azul", "Blanco/Verde", "Blanco/Gris"]
+    },
+    { 
+      id: 24, 
+      name: "Converse Chuck 70", 
+      price: 280, 
+      image: "https://images.unsplash.com/photo-1597040966242-488c721aa6f0?w=800&auto=format&fit=crop", 
+      category: "Zapatillas",
+      description: "La versión premium de las clásicas All Star. Lona más gruesa y plantilla acolchada.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["36", "37", "38", "39", "40", "41", "42"],
+      colors: ["Negro", "Blanco", "Azul", "Rojo"]
     },
   ];
 
@@ -325,13 +377,10 @@ const TiendaView = () => {
       return details;
     }).join('\n');
 
-    const waMessage = encodeURIComponent(
-      `¡Hola! 👋 Quisiera realizar un pedido:\n\n${itemsSummary}\n\n*Total: S/ ${totalCart}.00*\n\nGracias.`
-    );
-    const waUrl = `https://wa.me/51975736687?text=${waMessage}`;
-
+    const paymentInfo = selectedPayment === 'yape' ? 'Yape' : selectedPayment === 'plin' ? 'Plin' : 'Transferencia BCP';
+    
     try {
-      const { error } = await supabase.from('pedidos').insert([
+      const { data: insertedOrder, error } = await supabase.from('pedidos').insert([
         {
           cliente_nombre: 'Cliente Demo',
           telefono: 'Demo-999',
@@ -343,15 +392,25 @@ const TiendaView = () => {
             color: item.selectedColor
           }))),
           total: totalCart,
-          estado: 'pendiente',
-          origen: 'web'
+          estado: 'nuevo',
+          origen: 'web',
+          metodo_pago: paymentInfo
         }
-      ]);
+      ]).select();
 
       if (error) throw error;
 
+      const orderId = insertedOrder?.[0]?.id || 'N/A';
+      
+      const waMessage = encodeURIComponent(
+        `¡Hola MarIA! 👋 He realizado un nuevo pedido desde la web:\n\n*ID de Pedido:* #${orderId}\n\n*Productos:*\n${itemsSummary}\n\n*Total:* S/ ${totalCart}.00\n*Método de Pago:* ${paymentInfo}\n\n_He realizado el pedido y en breve realizaré el pago._\n\nPor favor, confírmame la recepción.`
+      );
+      const waUrl = `https://wa.me/51975736687?text=${waMessage}`;
+
       setCart([]);
       setIsCartOpen(false);
+      setCheckoutStep('cart');
+      setSelectedPayment(null);
       setOrderSuccess(true);
       
       // Redirect to WhatsApp after a short delay to show the success message
@@ -585,44 +644,146 @@ const TiendaView = () => {
               className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-[70] flex flex-col p-6 lg:p-10"
             >
               <div className="flex justify-between items-center mb-10">
-                <h3 className="text-2xl font-black text-text-main">Tu Canasta</h3>
-                <button onClick={() => setIsCartOpen(false)} className="p-3 hover:bg-gray-100 rounded-2xl transition-colors">
-                  <ArrowLeft className="w-6 h-6 text-gray-400 rotate-180" />
+                <div className="flex items-center gap-3">
+                  {checkoutStep === 'payment' && (
+                    <button 
+                      onClick={() => setCheckoutStep('cart')}
+                      className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                    >
+                      <ArrowLeft className="w-5 h-5 text-gray-400" />
+                    </button>
+                  )}
+                  <h3 className="text-2xl font-black text-text-main">
+                    {checkoutStep === 'cart' ? 'Tu Canasta' : 'Método de Pago'}
+                  </h3>
+                </div>
+                <button onClick={() => { setIsCartOpen(false); setCheckoutStep('cart'); }} className="p-3 hover:bg-gray-100 rounded-2xl transition-colors">
+                  <X className="w-6 h-6 text-gray-400" />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
-                {cart.length === 0 ? (
-                  <div className="text-center py-20">
-                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <ShoppingBag className="w-10 h-10 text-gray-300" />
-                    </div>
-                    <p className="text-text-muted font-bold">Tu canasta está vacía</p>
-                  </div>
-                ) : (
-                  cart.map((item) => (
-                    <div key={item.cartItemId} className="flex gap-5 bg-gray-50 p-5 rounded-3xl border border-gray-100 group relative">
-                      <img src={item.image} alt={item.name} className="w-20 h-20 rounded-2xl object-cover" />
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start mb-1">
-                          <h4 className="font-bold text-text-main">{item.name}</h4>
-                          <button onClick={() => removeFromCart(item.cartItemId)} className="text-red-400 hover:text-red-600 transition-colors">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {item.selectedSize && (
-                            <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-gray-100 text-primary uppercase tracking-tighter">Talla: {item.selectedSize}</span>
-                          )}
-                          {item.selectedColor && (
-                            <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-gray-100 text-secondary uppercase tracking-tighter">Color: {item.selectedColor}</span>
-                          )}
-                        </div>
-                        <div className="text-xs text-text-muted mb-3">S/ {item.price}.00 x {item.cantidad}</div>
-                        <div className="font-black text-primary">S/ {item.price * item.cantidad}.00</div>
+                {checkoutStep === 'cart' ? (
+                  cart.length === 0 ? (
+                    <div className="text-center py-20">
+                      <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <ShoppingBag className="w-10 h-10 text-gray-300" />
                       </div>
+                      <p className="text-text-muted font-bold">Tu canasta está vacía</p>
                     </div>
-                  ))
+                  ) : (
+                    cart.map((item) => (
+                      <div key={item.cartItemId} className="flex gap-5 bg-gray-50 p-5 rounded-3xl border border-gray-100 group relative">
+                        <img src={item.image} alt={item.name} className="w-20 h-20 rounded-2xl object-cover" referrerPolicy="no-referrer" />
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-1">
+                            <h4 className="font-bold text-text-main">{item.name}</h4>
+                            <button onClick={() => removeFromCart(item.cartItemId)} className="text-red-400 hover:text-red-600 transition-colors">
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {item.selectedSize && (
+                              <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-gray-100 text-primary uppercase tracking-tighter">Talla: {item.selectedSize}</span>
+                            )}
+                            {item.selectedColor && (
+                              <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-gray-100 text-secondary uppercase tracking-tighter">Color: {item.selectedColor}</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-text-muted mb-3">S/ {item.price}.00 x {item.cantidad}</div>
+                          <div className="font-black text-primary">S/ {item.price * item.cantidad}.00</div>
+                        </div>
+                      </div>
+                    ))
+                  )
+                ) : (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { id: 'yape', label: 'Yape', color: 'bg-[#742284]' },
+                        { id: 'plin', label: 'Plin', color: 'bg-[#00D1FF]' },
+                        { id: 'bcp', label: 'BCP', color: 'bg-[#002A54]' }
+                      ].map((method) => (
+                        <button
+                          key={method.id}
+                          onClick={() => setSelectedPayment(method.id as any)}
+                          className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
+                            selectedPayment === method.id 
+                              ? `border-primary bg-primary/5` 
+                              : 'border-gray-100 hover:border-gray-200'
+                          }`}
+                        >
+                          <div className={`w-10 h-10 ${method.color} rounded-xl flex items-center justify-center text-white font-black text-[10px]`}>
+                            {method.label[0]}
+                          </div>
+                          <span className="text-[10px] font-black text-text-main uppercase">{method.label}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {selectedPayment && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gray-50 p-6 rounded-[32px] border border-gray-100 space-y-6"
+                      >
+                        {selectedPayment !== 'bcp' ? (
+                          <div className="text-center space-y-4">
+                            <div className="w-40 h-40 bg-white p-4 rounded-3xl mx-auto shadow-sm border border-gray-100 flex items-center justify-center">
+                              <QrCode className="w-32 h-32 text-gray-200" />
+                            </div>
+                            <div className="space-y-1">
+                              <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Número de Celular</div>
+                              <div className="flex items-center justify-center gap-3">
+                                <span className="text-xl font-black text-text-main">975 736 687</span>
+                                <button 
+                                  onClick={() => copyToClipboard('975736687', 'phone')}
+                                  className="p-2 hover:bg-white rounded-lg transition-colors text-primary"
+                                >
+                                  {copied === 'phone' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-6">
+                            <div className="space-y-4">
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Número de Cuenta BCP</div>
+                                <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100">
+                                  <span className="font-bold text-text-main">191-98765432-0-12</span>
+                                  <button 
+                                    onClick={() => copyToClipboard('19198765432012', 'bcp')}
+                                    className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-primary"
+                                  >
+                                    {copied === 'bcp' ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">CCI</div>
+                                <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100">
+                                  <span className="font-bold text-text-main">002-19198765432012-54</span>
+                                  <button 
+                                    onClick={() => copyToClipboard('0021919876543201254', 'cci')}
+                                    className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-primary"
+                                  >
+                                    {copied === 'cci' ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3">
+                              <Info className="w-5 h-5 text-blue-500 shrink-0" />
+                              <p className="text-[10px] text-blue-700 font-medium leading-tight">
+                                Titular: GaorSystem SAC. Recuerda enviar el comprobante por WhatsApp.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -631,27 +792,43 @@ const TiendaView = () => {
                   <span className="text-lg font-bold text-text-muted">Total a pagar:</span>
                   <span className="text-3xl font-black text-text-main">S/ {totalCart}.00</span>
                 </div>
-                <button 
-                  onClick={handleCheckout}
-                  disabled={cart.length === 0 || isCheckingOut}
-                  className={`w-full py-6 rounded-[24px] font-black text-lg transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-4 ${
-                    isCheckingOut || cart.length === 0
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-primary hover:bg-primary-dark text-white shadow-primary/30'
-                  }`}
-                >
-                  {isCheckingOut ? (
-                    <>
-                      <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
-                      Procesando...
-                    </>
-                  ) : (
-                    <>
-                      Confirmar Pedido
-                      <ArrowRight className="w-6 h-6" />
-                    </>
-                  )}
-                </button>
+                
+                {checkoutStep === 'cart' ? (
+                  <button 
+                    onClick={() => setCheckoutStep('payment')}
+                    disabled={cart.length === 0}
+                    className={`w-full py-6 rounded-[24px] font-black text-lg transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-4 ${
+                      cart.length === 0
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-primary hover:bg-primary-dark text-white shadow-primary/30'
+                    }`}
+                  >
+                    Confirmar Pedido
+                    <ArrowRight className="w-6 h-6" />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={handleCheckout}
+                    disabled={!selectedPayment || isCheckingOut}
+                    className={`w-full py-6 rounded-[24px] font-black text-lg transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-4 ${
+                      isCheckingOut || !selectedPayment
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-secondary hover:bg-secondary-dark text-white shadow-secondary/30'
+                    }`}
+                  >
+                    {isCheckingOut ? (
+                      <>
+                        <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                        Procesando...
+                      </>
+                    ) : (
+                      <>
+                        Finalizar y Enviar a WhatsApp
+                        <MessageCircle className="w-6 h-6" />
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </motion.div>
           </>
@@ -664,21 +841,22 @@ const TiendaView = () => {
 const AsistenteView = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [chatMessages, setChatMessages] = useState([
-    { role: 'bot', text: '¡Hola! 👋 Soy MarIA. ¿En qué puedo ayudarte hoy?', time: '10:42 AM' },
-    { role: 'user', text: '¿Tienen Cebiche Clásico?', time: '10:43 AM' },
-    { role: 'bot', text: '¡Claro que sí! 🍋 Nuestro **Cebiche Clásico** está a **S/ 35.00**. ¿Te gustaría pedir uno?', time: '10:43 AM' },
-    { role: 'user', text: 'Sí, por favor. Uno para llevar.', time: '10:44 AM' }
+    { role: 'bot', text: '¡Hola! 👋 Bienvenido/a.\nSoy MarIA, tu asesora virtual inteligente.\nCuéntame, ¿qué necesidad tienes hoy?', time: '10:42 AM' },
   ]);
 
+  // Simulación de flujo consultivo basado en el prompt avanzado
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTyping(true);
       setTimeout(() => {
-        setChatMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: '¡Excelente! 📝 He anotado tu pedido de 1 Cebiche Clásico para llevar. El total es S/ 35.00. ¿Confirmamos para enviarlo a cocina?',
-          time: '10:45 AM'
-        }]);
+        setChatMessages(prev => [...prev, 
+          { role: 'user', text: 'Hola, busco un sistema para mi empresa.', time: '10:43 AM' },
+          { 
+            role: 'bot', 
+            text: 'Perfecto, un sistema de gestión puede ayudarte muchísimo. 😊\nPara orientarte mejor:\n– ¿En qué rubro estás?\n– ¿Cuántas personas trabajan?\n– ¿Qué proceso quieres mejorar primero?',
+            time: '10:44 AM'
+          }
+        ]);
         setIsTyping(false);
       }, 2000);
     }, 3000);
@@ -688,12 +866,13 @@ const AsistenteView = () => {
   return (
     <div className="h-full flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
     <DemoGuide 
-      title="Asistente MarIA (WhatsApp Business IA)"
-      description="Así es como MarIA atiende a tus clientes directamente en WhatsApp. Ella responde consultas sobre productos, precios y el estado de los pedidos con un lenguaje natural y cercano, cerrando ventas 24/7."
+      title="Cerebro IA: MarIA (Asesora Consultiva)"
+      description="MarIA no es un bot común. Utiliza un Agente de IA con Memoria y un flujo consultivo diseñado para escuchar, validar y orientar al cliente antes de ofrecer una solución. Esto genera confianza y ventas naturales."
       steps={[
-        "El cliente escribe por WhatsApp",
-        "MarIA responde al instante con información real",
-        "El pedido se confirma y llega a tu dashboard"
+        "Escuchar: Entiende la necesidad real",
+        "Validar: Confirma los puntos de dolor",
+        "Orientar: Ofrece la solución ideal",
+        "Cerrar: Genera el lead o la venta"
       ]}
       color="secondary"
     />
@@ -711,11 +890,11 @@ const AsistenteView = () => {
             <div className="bg-[#075e54] pt-10 pb-4 px-6 flex items-center justify-between shadow-md relative z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#075e54] font-black shadow-lg overflow-hidden">
-                  <img src="https://ais-dev-bbnhhu7v5wsigapxxwldvn-128001582731.us-east1.run.app/logo.png" alt="Logo" className="w-6 h-6 object-contain" onError={(e) => { (e.target as any).src = 'https://picsum.photos/seed/maria/100/100' }} />
+                  <img src="https://ais-dev-bbnhhu7v5wsigapxxwldvn-128001582731.us-east1.run.app/logo.png" alt="Logo" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" onError={(e) => { (e.target as any).src = 'https://picsum.photos/seed/maria/100/100' }} />
                 </div>
                 <div>
                   <div className="text-sm font-bold text-white flex items-center gap-1">
-                    MarIA Business
+                    MarIA Asesora
                     <CheckCircle2 className="w-3 h-3 text-blue-400 fill-white" />
                   </div>
                   <div className="text-[10px] text-white/80 font-medium">En línea</div>
@@ -795,16 +974,16 @@ const AsistenteView = () => {
         <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-4 bg-secondary/10 text-secondary rounded-2xl">
-              <Sparkles className="w-8 h-8" />
+              <Brain className="w-8 h-8" />
             </div>
-            <h3 className="text-2xl font-black text-text-main">Inteligencia que Vende</h3>
+            <h3 className="text-2xl font-black text-text-main">Cerebro Olivia (n8n + AI)</h3>
           </div>
           
           <div className="space-y-8">
             {[
-              { t: "Atención 24/7", d: "MarIA nunca duerme. Atiende pedidos a las 3 AM o en hora punta sin cansarse.", i: Clock },
-              { t: "Cierre de Ventas", d: "No solo responde, MarIA guía al cliente hasta el pago final.", i: ShoppingBag },
-              { t: "Personalidad de Marca", d: "Entrenamos a MarIA para que hable con el tono de tu negocio.", i: MessageCircle }
+              { t: "Memoria de Corto Plazo", d: "Recuerda el historial de la charla para dar respuestas coherentes y personalizadas.", i: Workflow },
+              { t: "Venta Consultiva", d: "Sigue un flujo de 4 pasos: Escuchar, Validar, Orientar y Ofrecer.", i: MessageSquare },
+              { t: "Personalidad Olivia", d: "Cálida, breve (máx 4 líneas) y empática. Habla como una persona real.", i: Sparkles }
             ].map((item, i) => (
               <div key={i} className="flex gap-6 group">
                 <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center group-hover:bg-secondary/10 transition-colors shrink-0">
@@ -1177,47 +1356,98 @@ const ConfiguracionView = () => {
         <div className="bg-white border border-gray-100 p-6 lg:p-10 rounded-[30px] lg:rounded-[40px] shadow-sm">
           <div className="flex items-center gap-4 mb-8 lg:mb-10">
             <div className="p-3 bg-secondary/10 text-secondary rounded-2xl">
-              <MessageCircle className="w-6 h-6" />
+              <Brain className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-black text-text-main">Personalidad de MarIA</h3>
+            <h3 className="text-xl font-black text-text-main">Cerebro IA (MarIA)</h3>
           </div>
 
           <div className="space-y-6 lg:space-y-8">
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tono de Voz</label>
-              <select className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30 appearance-none">
-                <option>Amigable y Cercano</option>
-                <option>Profesional y Directo</option>
-                <option>Elegante y Sofisticado</option>
-                <option>Divertido y Enérgico</option>
-              </select>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Motor de IA</label>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                  <Zap className="w-4 h-4 text-blue-500" />
+                </div>
+                <div>
+                  <div className="text-sm font-black text-text-main">GPT-4.1-mini</div>
+                  <div className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Agente con Memoria</div>
+                </div>
+              </div>
             </div>
+            
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Objetivo Principal</label>
-              <select className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30 appearance-none">
-                <option>Cerrar Ventas Rápidamente</option>
-                <option>Brindar Soporte al Cliente</option>
-                <option>Agendar Citas / Reservas</option>
-                <option>Informar sobre Productos</option>
-              </select>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prompt del Sistema (MarIA)</label>
+              <div className="p-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <p className="text-[10px] lg:text-xs text-text-muted leading-relaxed italic">
+                  "Eres MarIA, asistente virtual inteligente. Tu estilo es amigable, profesional, breve y consultivo. Reglas: Mensajes cortos (máx 4 líneas), Escuchar → Validar → Orientar → Ofrecer..."
+                </p>
+              </div>
             </div>
+
             <div className="space-y-6">
               <div className="flex justify-between items-center">
-                <div className="text-sm font-bold text-text-main">Respuestas Automáticas</div>
-                <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
+                <div className="text-sm font-bold text-text-main">Memoria de Sesión</div>
+                <div className="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
                   <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <div className="text-sm font-bold text-text-main">Sugerencias de Cross-selling</div>
-                <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
+                <div className="text-sm font-bold text-text-main">Venta Consultiva Natural</div>
+                <div className="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
                   <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
                 </div>
               </div>
             </div>
-            <div className="p-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-              <p className="text-xs text-text-muted leading-relaxed italic">
-                "MarIA está configurada para saludar cordialmente, ofrecer el menú del día y sugerir bebidas complementarias basándose en el pedido del cliente."
+          </div>
+        </div>
+
+        {/* Integraciones Avanzadas */}
+        <div className="bg-white border border-gray-100 p-6 lg:p-10 rounded-[30px] lg:rounded-[40px] shadow-sm lg:col-span-2">
+          <div className="flex items-center gap-4 mb-8 lg:mb-10">
+            <div className="p-3 bg-blue-500/10 text-blue-500 rounded-2xl">
+              <Zap className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-black text-text-main">Integraciones y Automatización</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-3xl border border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                    <MessageSquare className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-black text-text-main">Evolution API</div>
+                    <div className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Conectado</div>
+                  </div>
+                </div>
+                <div className="w-10 h-5 bg-green-500 rounded-full relative">
+                  <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
+                </div>
+              </div>
+              <p className="text-xs text-text-muted leading-relaxed">
+                Conexión activa con tu instancia de WhatsApp. MarIA recibe y envía mensajes automáticamente a través de esta API.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-3xl border border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                    <Workflow className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-black text-text-main">n8n Workflow</div>
+                    <div className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Activo</div>
+                  </div>
+                </div>
+                <div className="w-10 h-5 bg-green-500 rounded-full relative">
+                  <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
+                </div>
+              </div>
+              <p className="text-xs text-text-muted leading-relaxed">
+                Flujos de trabajo automatizados para procesar pedidos, actualizar inventario y enviar notificaciones personalizadas.
               </p>
             </div>
           </div>
@@ -1234,6 +1464,15 @@ export default function DemoSuite() {
   const [activeTab, setActiveTab] = useState('gestion');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showRoleAnnouncement, setShowRoleAnnouncement] = useState(true);
+  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'payment'>('cart');
+  const [selectedPayment, setSelectedPayment] = useState<'yape' | 'plin' | 'bcp' | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   // Handle role change and set default tab for each role
   const handleRoleChange = (role: 'cliente' | 'emprendedor') => {
@@ -1259,49 +1498,49 @@ export default function DemoSuite() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white w-full max-w-md rounded-[40px] p-10 lg:p-12 shadow-2xl text-center overflow-hidden"
+              className="relative bg-white w-full max-w-sm lg:max-w-md rounded-[32px] lg:rounded-[40px] p-5 lg:p-12 shadow-2xl text-center overflow-hidden max-h-[90vh] overflow-y-auto"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary" />
+              <div className="absolute top-0 left-0 w-full h-1 lg:h-2 bg-gradient-to-r from-primary to-secondary" />
               
-              <div className="w-20 h-20 bg-gray-50 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner">
-                <Users className="w-10 h-10 text-primary" />
+              <div className="w-12 h-12 lg:w-20 lg:h-20 bg-gray-50 rounded-[20px] lg:rounded-[32px] flex items-center justify-center mx-auto mb-4 lg:mb-8 shadow-inner">
+                <Users className="w-6 h-6 lg:w-10 lg:h-10 text-primary" />
               </div>
 
-              <h2 className="text-3xl font-black text-text-main mb-4 leading-tight">¡Bienvenido a MarIA!</h2>
-              <p className="text-text-muted text-lg mb-10 font-medium leading-relaxed">
+              <h2 className="text-xl lg:text-3xl font-black text-text-main mb-2 lg:mb-4 leading-tight">¡Bienvenido a MarIA!</h2>
+              <p className="text-text-muted text-sm lg:text-lg mb-4 lg:mb-10 font-medium leading-relaxed px-2">
                 Esta Demo Suite tiene <span className="text-primary font-black">dos modos</span> para que explores todo el potencial:
               </p>
 
-              <div className="grid gap-4 mb-10 text-left">
-                <div className="p-5 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4">
-                  <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
-                    <User className="w-5 h-5 text-white" />
+              <div className="grid gap-2 lg:gap-4 mb-6 lg:mb-10 text-left">
+                <div className="p-3 lg:p-5 bg-primary/5 rounded-2xl lg:rounded-3xl border border-primary/10 flex items-start gap-3 lg:gap-4">
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 bg-primary rounded-xl lg:rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+                    <User className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                   </div>
                   <div>
-                    <div className="font-black text-primary text-sm uppercase tracking-wider mb-1">Modo Cliente</div>
-                    <p className="text-xs text-text-muted font-medium">Interactúa con la IA, mira el catálogo y haz pedidos reales.</p>
+                    <div className="font-black text-primary text-[10px] lg:text-sm uppercase tracking-wider mb-0.5 lg:mb-1">Modo Cliente</div>
+                    <p className="text-[9px] lg:text-xs text-text-muted font-medium leading-tight">Interactúa con la IA, mira el catálogo y haz pedidos reales.</p>
                   </div>
                 </div>
 
-                <div className="p-5 bg-secondary/5 rounded-3xl border border-secondary/10 flex items-start gap-4">
-                  <div className="w-10 h-10 bg-secondary rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-secondary/20">
-                    <Briefcase className="w-5 h-5 text-white" />
+                <div className="p-3 lg:p-5 bg-secondary/5 rounded-2xl lg:rounded-3xl border border-secondary/10 flex items-start gap-3 lg:gap-4">
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 bg-secondary rounded-xl lg:rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-secondary/20">
+                    <Briefcase className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                   </div>
                   <div>
-                    <div className="font-black text-secondary text-sm uppercase tracking-wider mb-1">Modo Dueño</div>
-                    <p className="text-xs text-text-muted font-medium">Gestiona ventas, inventario y configura la personalidad de tu IA.</p>
+                    <div className="font-black text-secondary text-[10px] lg:text-sm uppercase tracking-wider mb-0.5 lg:mb-1">Modo Dueño</div>
+                    <p className="text-[9px] lg:text-xs text-text-muted font-medium leading-tight">Gestiona ventas, inventario y configura la personalidad de tu IA.</p>
                   </div>
                 </div>
               </div>
 
               <button 
                 onClick={() => setShowRoleAnnouncement(false)}
-                className="w-full bg-text-main text-white py-5 rounded-[24px] font-black text-lg shadow-xl hover:scale-[1.02] transition-all active:scale-95"
+                className="w-full bg-text-main text-white py-3.5 lg:py-5 rounded-[18px] lg:rounded-[24px] font-black text-sm lg:text-lg shadow-xl hover:scale-[1.02] transition-all active:scale-95"
               >
                 ¡Entendido!
               </button>
               
-              <p className="mt-6 text-[11px] font-bold text-text-light uppercase tracking-widest">
+              <p className="mt-4 lg:mt-6 text-[8px] lg:text-[11px] font-bold text-text-light uppercase tracking-widest leading-tight">
                 Cambia de modo en cualquier momento desde la barra lateral
               </p>
             </motion.div>
@@ -1324,7 +1563,7 @@ export default function DemoSuite() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 w-80 bg-white border-r border-gray-100 flex flex-col p-8 lg:p-10 shrink-0 shadow-sm z-[70] transition-transform duration-300 lg:relative lg:translate-x-0
+        fixed inset-y-0 left-0 w-72 lg:w-80 bg-white border-r border-gray-100 flex flex-col p-6 lg:p-10 shrink-0 shadow-sm z-[70] transition-transform duration-300 lg:relative lg:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex items-center justify-between mb-12 lg:mb-16">
@@ -1476,7 +1715,7 @@ export default function DemoSuite() {
         </header>
 
         {/* View Content */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-12 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-12 custom-scrollbar">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

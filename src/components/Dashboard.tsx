@@ -10,7 +10,11 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Info
+  Info,
+  Truck,
+  CreditCard,
+  ChefHat,
+  Package
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -118,6 +122,43 @@ const Dashboard = () => {
   }, []);
 
   const [selectedPedido, setSelectedPedido] = useState<any | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const updateOrderStatus = async (pedidoId: number, newStatus: string) => {
+    setUpdatingStatus(true);
+    try {
+      const { error } = await supabase
+        .from('pedidos')
+        .update({ estado: newStatus })
+        .eq('id', pedidoId);
+
+      if (error) throw error;
+
+      setPedidos(prev => prev.map(p => p.id === pedidoId ? { ...p, estado: newStatus } : p));
+      if (selectedPedido?.id === pedidoId) {
+        setSelectedPedido({ ...selectedPedido, estado: newStatus });
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
+  const getStatusConfig = (estado: string) => {
+    switch (estado) {
+      case 'nuevo':
+        return { label: 'Nuevo', color: 'blue-500', icon: ShoppingBag, bg: 'bg-blue-500/10' };
+      case 'pagado':
+        return { label: 'Pagado', color: 'green-500', icon: CreditCard, bg: 'bg-green-500/10' };
+      case 'preparando':
+        return { label: 'Preparando', color: 'orange-500', icon: ChefHat, bg: 'bg-orange-500/10' };
+      case 'enviado':
+        return { label: 'Enviado', color: 'purple-500', icon: Truck, bg: 'bg-purple-500/10' };
+      default:
+        return { label: estado, color: 'gray-500', icon: Clock, bg: 'bg-gray-500/10' };
+    }
+  };
 
   const stats = useMemo(() => {
     const totalVentas = pedidos.reduce((acc, p) => acc + (Number(p.total) || 0), 0);
@@ -168,7 +209,7 @@ const Dashboard = () => {
           <ol className="text-xs text-text-muted space-y-2 list-decimal ml-4">
             <li>Crea un proyecto en <a href="https://supabase.com" target="_blank" className="text-primary underline">Supabase</a>.</li>
             <li>Crea una tabla llamada <strong>pedidos</strong> con las columnas: 
-              <code className="block bg-gray-50 p-2 mt-1 rounded">id (int8), cliente_nombre (text), telefono (text), items (text/json), total (float8), estado (text), origen (text), created_at (timestamptz)</code>
+              <code className="block bg-gray-50 p-2 mt-1 rounded text-[10px] lg:text-xs">id (int8), cliente_nombre (text), telefono (text), items (text/json), total (float8), estado (text: nuevo, pagado, preparando, enviado), origen (text), metodo_pago (text), created_at (timestamptz)</code>
             </li>
             <li>Copia la <strong>URL</strong> y el <strong>Anon Key</strong> de la configuración de API de Supabase.</li>
             <li>Agrégalos como <strong>VITE_SUPABASE_URL</strong> y <strong>VITE_SUPABASE_ANON_KEY</strong> en los Secretos de AI Studio.</li>
@@ -193,7 +234,7 @@ const Dashboard = () => {
         steps={[
           "Recibe notificaciones sonoras de nuevos pedidos",
           "Haz clic en un pedido para ver el detalle de productos",
-          "Gestiona el estado de cada pedido (Pendiente/Entregado)"
+          "Gestiona el estado: Nuevo, Pagado, Preparando o Enviado"
         ]}
       />
 
@@ -234,30 +275,35 @@ const Dashboard = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {pedidos.map((p) => (
-                  <div 
-                    key={p.id} 
-                    onClick={() => setSelectedPedido(p)}
-                    className="bg-gray-50 border border-gray-100 p-4 lg:p-6 rounded-[24px] lg:rounded-[32px] flex justify-between items-center hover:border-primary/30 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3 lg:gap-5">
-                      <div className={`p-3 lg:p-4 rounded-xl lg:rounded-2xl ${p.estado === 'pendiente' ? 'bg-orange-500/10 text-orange-500' : 'bg-green-500/10 text-green-500'}`}>
-                        {p.estado === 'pendiente' ? <Clock className="w-5 h-5 lg:w-6 lg:h-6" /> : <CheckCircle2 className="w-5 h-5 lg:w-6 lg:h-6" />}
-                      </div>
-                      <div>
-                        <div className="text-sm lg:text-base font-black text-text-main group-hover:text-primary transition-colors line-clamp-1">{p.cliente_nombre}</div>
-                        <div className="flex items-center gap-2 lg:gap-3 mt-1">
-                          <span className="text-[8px] lg:text-[10px] text-gray-400 font-black uppercase tracking-widest bg-white px-2 py-0.5 rounded-md border border-gray-100">{p.origen}</span>
-                          <span className="text-[8px] lg:text-[10px] text-gray-400 font-bold uppercase tracking-widest">{new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                {pedidos.map((p) => {
+                  const status = getStatusConfig(p.estado);
+                  const StatusIcon = status.icon;
+                  return (
+                    <div 
+                      key={p.id} 
+                      onClick={() => setSelectedPedido(p)}
+                      className="bg-gray-50 border border-gray-100 p-4 lg:p-6 rounded-[24px] lg:rounded-[32px] flex justify-between items-center hover:border-primary/30 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3 lg:gap-5">
+                        <div className={`p-3 lg:p-4 rounded-xl lg:rounded-2xl ${status.bg} text-${status.color}`}>
+                          <StatusIcon className="w-5 h-5 lg:w-6 lg:h-6" />
+                        </div>
+                        <div>
+                          <div className="text-sm lg:text-base font-black text-text-main group-hover:text-primary transition-colors line-clamp-1">{p.cliente_nombre}</div>
+                          <div className="flex items-center gap-2 lg:gap-3 mt-1">
+                            <span className="text-[8px] lg:text-[10px] text-gray-400 font-black uppercase tracking-widest bg-white px-2 py-0.5 rounded-md border border-gray-100">{p.origen}</span>
+                            <span className={`text-[8px] lg:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border border-${status.color}/20 text-${status.color}`}>{status.label}</span>
+                            <span className="text-[8px] lg:text-[10px] text-gray-400 font-bold uppercase tracking-widest">{new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
                         </div>
                       </div>
+                      <div className="text-right ml-4">
+                        <div className="text-base lg:text-lg font-black text-text-main">S/ {p.total}</div>
+                        <div className="text-[8px] lg:text-[10px] text-primary font-black uppercase tracking-widest mt-1">Ver Detalle →</div>
+                      </div>
                     </div>
-                    <div className="text-right ml-4">
-                      <div className="text-base lg:text-lg font-black text-text-main">S/ {p.total}</div>
-                      <div className="text-[8px] lg:text-[10px] text-primary font-black uppercase tracking-widest mt-1">Ver Detalle →</div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -335,6 +381,46 @@ const Dashboard = () => {
                 <div className="text-xs lg:text-sm font-black text-text-main">{selectedPedido.cliente_nombre}</div>
               </div>
 
+              <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+                <div className="text-[10px] lg:text-xs font-bold text-text-muted uppercase">Estado Actual</div>
+                <div className={`text-xs lg:text-sm font-black px-3 py-1 rounded-full ${getStatusConfig(selectedPedido.estado).bg} text-${getStatusConfig(selectedPedido.estado).color}`}>
+                  {getStatusConfig(selectedPedido.estado).label}
+                </div>
+              </div>
+
+              {selectedPedido.metodo_pago && (
+                <div className="flex justify-between items-center bg-primary/5 p-4 rounded-2xl border border-primary/10">
+                  <div className="text-[10px] lg:text-xs font-bold text-primary uppercase">Método de Pago</div>
+                  <div className="text-xs lg:text-sm font-black text-primary">{selectedPedido.metodo_pago}</div>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <div className="text-[10px] lg:text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Cambiar Estado</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {['nuevo', 'pagado', 'preparando', 'enviado'].map((status) => {
+                    const config = getStatusConfig(status);
+                    const Icon = config.icon;
+                    const isActive = selectedPedido.estado === status;
+                    return (
+                      <button
+                        key={status}
+                        disabled={updatingStatus}
+                        onClick={() => updateOrderStatus(selectedPedido.id, status)}
+                        className={`flex flex-col items-center gap-2 p-3 rounded-2xl border transition-all ${
+                          isActive 
+                            ? `bg-${config.color} border-${config.color} text-white shadow-lg shadow-${config.color}/20` 
+                            : 'bg-white border-gray-100 text-gray-400 hover:border-primary/30 hover:text-primary'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="text-[9px] font-black uppercase tracking-tighter">{config.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <div className="text-[10px] lg:text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Productos</div>
                 {JSON.parse(selectedPedido.items || '[]').map((item: any, i: number) => (
@@ -354,12 +440,9 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+            <div className="grid grid-cols-1 gap-3 lg:gap-4">
               <button className="py-4 bg-gray-100 text-text-muted rounded-2xl font-bold text-xs lg:text-sm hover:bg-gray-200 transition-all">
                 Imprimir Comprobante
-              </button>
-              <button className="py-4 bg-primary text-white rounded-2xl font-bold text-xs lg:text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
-                Marcar como Entregado
               </button>
             </div>
           </div>
