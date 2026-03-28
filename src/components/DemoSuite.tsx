@@ -841,19 +841,19 @@ const TiendaView = () => {
 const AsistenteView = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [chatMessages, setChatMessages] = useState([
-    { role: 'bot', text: '¡Hola! 👋 Bienvenido/a.\nSoy MarIA, tu asesora virtual inteligente.\nCuéntame, ¿qué necesidad tienes hoy?', time: '10:42 AM' },
+    { role: 'bot', text: '¡Hola! Soy MarIA 👋. Esta es una demostración de cómo recibo y proceso un pedido automáticamente.\n\n¿En qué rubro te gustaría probar mi potencia hoy? (Comida, Tecnología, Ropa, etc.)', time: '10:42 AM' },
   ]);
 
-  // Simulación de flujo consultivo basado en el prompt avanzado
+  // Simulación de flujo multi-rubro
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTyping(true);
       setTimeout(() => {
         setChatMessages(prev => [...prev, 
-          { role: 'user', text: 'Hola, busco un sistema para mi empresa.', time: '10:43 AM' },
+          { role: 'user', text: 'Quiero ver cómo manejas un pedido de tecnología.', time: '10:43 AM' },
           { 
             role: 'bot', 
-            text: 'Perfecto, un sistema de gestión puede ayudarte muchísimo. 😊\nPara orientarte mejor:\n– ¿En qué rubro estás?\n– ¿Cuántas personas trabajan?\n– ¿Qué proceso quieres mejorar primero?',
+            text: '¡Excelente elección! 💻 Como asistente inteligente, puedo gestionar catálogos complejos, tallas, colores o especificaciones técnicas.\n\nSi haces un pedido en la pestaña "Tienda", verás cómo capturo cada detalle al instante.',
             time: '10:44 AM'
           }
         ]);
@@ -1379,7 +1379,7 @@ const ConfiguracionView = () => {
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prompt del Sistema (MarIA)</label>
               <div className="p-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
                 <p className="text-[10px] lg:text-xs text-text-muted leading-relaxed italic">
-                  "Eres MarIA, asistente virtual inteligente. Tu estilo es amigable, profesional, breve y consultivo. Reglas: Mensajes cortos (máx 4 líneas), Escuchar → Validar → Orientar → Ofrecer..."
+                  "Eres MarIA, la asistente virtual de esta Demo Suite. Tu objetivo es demostrar que puedes gestionar pedidos de CUALQUIER rubro. Identifícate siempre como una demo tecnológica..."
                 </p>
               </div>
             </div>
