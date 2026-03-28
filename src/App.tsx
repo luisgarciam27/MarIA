@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, ShoppingBag, BarChart3, ArrowRight, ChevronDown, CheckCircle2 } from 'lucide-react';
+import Dashboard from './components/Dashboard';
+import { supabase } from './lib/supabase';
 
 const Logo = () => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -251,6 +254,26 @@ const WhatsAppCatalog = () => {
     { name: "Chicha Morada 1L", price: "S/ 15.00", image: "https://picsum.photos/seed/chicha/400/400" },
   ];
 
+  const handleAddOrder = async (product: any) => {
+    const { error } = await supabase.from('pedidos').insert([
+      {
+        cliente_nombre: 'Cliente Web',
+        telefono: 'Web',
+        items: JSON.stringify([{ nombre: product.name, cantidad: 1, precio: product.price }]),
+        total: parseFloat(product.price.replace('S/ ', '')),
+        estado: 'pendiente',
+        origen: 'web'
+      }
+    ]);
+
+    if (error) {
+      console.error('Error:', error);
+      alert('Hubo un error al procesar tu pedido.');
+    } else {
+      alert('¡Pedido enviado al Dashboard!');
+    }
+  };
+
   return (
     <section className="py-24 bg-bg-main overflow-hidden">
       <div className="container mx-auto px-6 max-w-6xl">
@@ -309,7 +332,7 @@ const WhatsAppCatalog = () => {
                       <div className="p-2">
                         <div className="text-[0.65rem] font-bold truncate">{p.name}</div>
                         <div className="text-[0.6rem] text-secondary font-bold">{p.price}</div>
-                        <button className="w-full mt-1 bg-primary/10 text-primary text-[0.55rem] font-bold py-1 rounded">
+                        <button onClick={() => handleAddOrder(p)} className="w-full mt-1 bg-primary/10 text-primary text-[0.55rem] font-bold py-1 rounded">
                           Añadir +
                         </button>
                       </div>
@@ -722,27 +745,48 @@ const WhatsAppModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
   );
 };
 
+const LandingPage = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => (
+  <>
+    <Navbar onOpenWhatsApp={onOpenWhatsApp} />
+    <Hero onOpenWhatsApp={onOpenWhatsApp} />
+    <Problem />
+    <HowItWorks />
+    <Pillars />
+    <WhatsAppCatalog />
+    <POS />
+    <Numbers />
+    <Testimonials />
+    <Pricing onOpenWhatsApp={onOpenWhatsApp} />
+    <Process />
+    <FAQ />
+    <CTA onOpenWhatsApp={onOpenWhatsApp} />
+    <Footer />
+    <WhatsAppWidget onOpenWhatsApp={onOpenWhatsApp} />
+  </>
+);
+
 export default function App() {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-bg-main selection:bg-primary/20 selection:text-primary">
-      <WhatsAppModal isOpen={isWhatsAppModalOpen} onClose={() => setIsWhatsAppModalOpen(false)} />
-      <Navbar onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
-      <Hero onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
-      <Problem />
-      <HowItWorks />
-      <Pillars />
-      <WhatsAppCatalog />
-      <POS />
-      <Numbers />
-      <Testimonials />
-      <Pricing onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
-      <Process />
-      <FAQ />
-      <CTA onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
-      <Footer />
-      <WhatsAppWidget onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-bg-main selection:bg-primary/20 selection:text-primary">
+        <WhatsAppModal isOpen={isWhatsAppModalOpen} onClose={() => setIsWhatsAppModalOpen(false)} />
+        
+        <Routes>
+          <Route path="/" element={<LandingPage onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />} />
+          <Route path="/demo" element={
+            <div className="min-h-screen bg-bg-main">
+              <div className="container mx-auto py-6">
+                <Link to="/" className="text-primary font-bold hover:underline mb-6 inline-block">← Volver al inicio</Link>
+                <Dashboard />
+              </div>
+            </div>
+          } />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
+
+
