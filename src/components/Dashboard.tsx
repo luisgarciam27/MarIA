@@ -25,7 +25,7 @@ import {
 } from 'recharts';
 
 const DemoGuide = ({ title, description, steps }: { title: string, description: string, steps: string[] }) => (
-  <div className="bg-white border border-gray-100 p-8 rounded-[32px] mb-10 relative overflow-hidden shadow-sm">
+  <div className="bg-white border border-gray-100 p-6 lg:p-8 rounded-[30px] lg:rounded-[32px] mb-10 relative overflow-hidden shadow-sm">
     <div className="relative z-10">
       <div className="flex items-center gap-2 text-primary mb-3">
         <div className="p-1.5 rounded-lg bg-primary/10">
@@ -33,13 +33,13 @@ const DemoGuide = ({ title, description, steps }: { title: string, description: 
         </div>
         <span className="text-[10px] font-black uppercase tracking-[0.2em]">Guía de la Demo</span>
       </div>
-      <h3 className="text-2xl font-black text-text-main mb-3">{title}</h3>
-      <p className="text-base text-text-muted mb-6 max-w-3xl leading-relaxed">{description}</p>
-      <div className="flex flex-wrap gap-4">
+      <h3 className="text-xl lg:text-2xl font-black text-text-main mb-3">{title}</h3>
+      <p className="text-sm lg:text-base text-text-muted mb-6 max-w-3xl leading-relaxed">{description}</p>
+      <div className="flex flex-wrap gap-3 lg:gap-4">
         {steps.map((step, i) => (
           <div key={i} className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-2xl border border-gray-100">
             <div className="w-6 h-6 bg-primary text-white rounded-lg flex items-center justify-center text-[10px] font-black shadow-sm">{i + 1}</div>
-            <span className="text-xs font-bold text-text-main">{step}</span>
+            <span className="text-[11px] lg:text-xs font-bold text-text-main">{step}</span>
           </div>
         ))}
       </div>
@@ -48,20 +48,20 @@ const DemoGuide = ({ title, description, steps }: { title: string, description: 
 );
 
 const StatCard = ({ title, value, icon: Icon, trend, trendValue, color }: any) => (
-  <div className="bg-white border border-gray-100 p-8 rounded-[32px] hover:border-primary/30 transition-all duration-300 group shadow-sm">
+  <div className="bg-white border border-gray-100 p-6 lg:p-8 rounded-[30px] lg:rounded-[32px] hover:border-primary/30 transition-all duration-300 group shadow-sm">
     <div className="flex justify-between items-start mb-6">
-      <div className={`p-4 rounded-2xl bg-${color}/10 text-${color} group-hover:scale-110 transition-transform duration-300`}>
-        <Icon className="w-7 h-7" />
+      <div className={`p-3 lg:p-4 rounded-2xl bg-${color}/10 text-${color} group-hover:scale-110 transition-transform duration-300`}>
+        <Icon className="w-6 h-6 lg:w-7 lg:h-7" />
       </div>
       {trend && (
-        <div className={`flex items-center gap-1.5 text-xs font-black ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-          {trend === 'up' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+        <div className={`flex items-center gap-1.5 text-[10px] lg:text-xs font-black ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+          {trend === 'up' ? <ArrowUpRight className="w-3 h-3 lg:w-4 lg:h-4" /> : <ArrowDownRight className="w-3 h-3 lg:w-4 lg:h-4" />}
           {trendValue}%
         </div>
       )}
     </div>
-    <div className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{title}</div>
-    <div className="text-3xl font-black text-text-main">{value}</div>
+    <div className="text-gray-400 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] mb-2">{title}</div>
+    <div className="text-2xl lg:text-3xl font-black text-text-main">{value}</div>
   </div>
 );
 
@@ -197,39 +197,39 @@ const Dashboard = () => {
         ]}
       />
 
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h2 className="text-3xl font-black text-text-main tracking-tight">Panel de Gestión</h2>
-          <p className="text-text-muted mt-1 text-sm font-medium">Monitoreo en tiempo real de tu negocio.</p>
+          <h2 className="text-2xl lg:text-3xl font-black text-text-main tracking-tight">Panel de Gestión</h2>
+          <p className="text-text-muted mt-1 text-xs lg:text-sm font-medium">Monitoreo en tiempo real de tu negocio.</p>
         </div>
-        <div className="flex gap-4">
-          <div className="bg-white border border-gray-100 px-5 py-3 rounded-2xl text-xs font-black text-text-muted flex items-center gap-3 shadow-sm">
-            <Clock className="w-5 h-5 text-primary" />
+        <div className="flex gap-4 w-full sm:w-auto">
+          <div className="w-full sm:w-auto bg-white border border-gray-100 px-5 py-3 rounded-2xl text-[10px] lg:text-xs font-black text-text-muted flex items-center justify-center gap-3 shadow-sm">
+            <Clock className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
             Hoy: {new Date().toLocaleDateString()}
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         <StatCard title="Ventas Totales" value={stats.totalVentas} icon={DollarSign} trend="up" trendValue="14" color="primary" />
         <StatCard title="Pedidos Hoy" value={stats.pedidosHoy} icon={ShoppingBag} trend="up" trendValue="8" color="blue-500" />
         <StatCard title="Ticket Promedio" value={stats.ticketPromedio} icon={TrendingUp} trend="down" trendValue="2" color="purple-500" />
         <StatCard title="Tasa Conversión" value={stats.tasaConversion} icon={Users} trend="up" trendValue="5" color="green-500" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
         {/* Pedidos Recientes - Principal */}
-        <div className="lg:col-span-2 bg-white border border-gray-100 p-10 rounded-[40px] flex flex-col shadow-sm">
+        <div className="lg:col-span-2 bg-white border border-gray-100 p-6 lg:p-10 rounded-[30px] lg:rounded-[40px] flex flex-col shadow-sm">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-black text-text-main">Pedidos Recientes</h3>
+            <h3 className="text-lg lg:text-xl font-black text-text-main">Pedidos Recientes</h3>
             <div className="flex gap-2">
-              <span className="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">En Vivo</span>
+              <span className="bg-primary/10 text-primary text-[9px] lg:text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">En Vivo</span>
             </div>
           </div>
-          <div className="flex-1 space-y-5 overflow-y-auto max-h-[500px] pr-3 custom-scrollbar">
+          <div className="flex-1 space-y-4 lg:space-y-5 overflow-y-auto max-h-[500px] pr-2 lg:pr-3 custom-scrollbar">
             {pedidos.length === 0 ? (
-              <div className="text-center py-24 text-gray-400 text-sm font-medium">
-                <ShoppingBag className="w-12 h-12 mx-auto mb-4 opacity-20" />
+              <div className="text-center py-16 lg:py-24 text-gray-400 text-sm font-medium">
+                <ShoppingBag className="w-10 h-10 lg:w-12 lg:h-12 mx-auto mb-4 opacity-20" />
                 Esperando pedidos en tiempo real...
               </div>
             ) : (
@@ -238,41 +238,41 @@ const Dashboard = () => {
                   <div 
                     key={p.id} 
                     onClick={() => setSelectedPedido(p)}
-                    className="bg-gray-50 border border-gray-100 p-6 rounded-[32px] flex justify-between items-center hover:border-primary/30 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all group cursor-pointer"
+                    className="bg-gray-50 border border-gray-100 p-4 lg:p-6 rounded-[24px] lg:rounded-[32px] flex justify-between items-center hover:border-primary/30 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all group cursor-pointer"
                   >
-                    <div className="flex items-center gap-5">
-                      <div className={`p-4 rounded-2xl ${p.estado === 'pendiente' ? 'bg-orange-500/10 text-orange-500' : 'bg-green-500/10 text-green-500'}`}>
-                        {p.estado === 'pendiente' ? <Clock className="w-6 h-6" /> : <CheckCircle2 className="w-6 h-6" />}
+                    <div className="flex items-center gap-3 lg:gap-5">
+                      <div className={`p-3 lg:p-4 rounded-xl lg:rounded-2xl ${p.estado === 'pendiente' ? 'bg-orange-500/10 text-orange-500' : 'bg-green-500/10 text-green-500'}`}>
+                        {p.estado === 'pendiente' ? <Clock className="w-5 h-5 lg:w-6 lg:h-6" /> : <CheckCircle2 className="w-5 h-5 lg:w-6 lg:h-6" />}
                       </div>
                       <div>
-                        <div className="text-base font-black text-text-main group-hover:text-primary transition-colors">{p.cliente_nombre}</div>
-                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest bg-white px-2 py-0.5 rounded-md border border-gray-100">{p.origen}</span>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <div className="text-sm lg:text-base font-black text-text-main group-hover:text-primary transition-colors line-clamp-1">{p.cliente_nombre}</div>
+                        <div className="flex items-center gap-2 lg:gap-3 mt-1">
+                          <span className="text-[8px] lg:text-[10px] text-gray-400 font-black uppercase tracking-widest bg-white px-2 py-0.5 rounded-md border border-gray-100">{p.origen}</span>
+                          <span className="text-[8px] lg:text-[10px] text-gray-400 font-bold uppercase tracking-widest">{new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-lg font-black text-text-main">S/ {p.total}</div>
-                      <div className="text-[10px] text-primary font-black uppercase tracking-widest mt-1">Ver Detalle →</div>
+                    <div className="text-right ml-4">
+                      <div className="text-base lg:text-lg font-black text-text-main">S/ {p.total}</div>
+                      <div className="text-[8px] lg:text-[10px] text-primary font-black uppercase tracking-widest mt-1">Ver Detalle →</div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
-          <button className="w-full mt-8 py-4 border border-gray-100 rounded-2xl text-xs font-black text-gray-400 hover:bg-primary/5 hover:text-primary transition-all">
+          <button className="w-full mt-6 lg:mt-8 py-4 border border-gray-100 rounded-2xl text-xs font-black text-gray-400 hover:bg-primary/5 hover:text-primary transition-all">
             Ver Historial Completo
           </button>
         </div>
 
         {/* Flujo de Ventas - Secondary */}
-        <div className="lg:col-span-1 space-y-10">
-          <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
+        <div className="lg:col-span-1 space-y-8 lg:space-y-10">
+          <div className="bg-white border border-gray-100 p-6 lg:p-10 rounded-[30px] lg:rounded-[40px] shadow-sm">
             <div className="flex justify-between items-center mb-8">
               <h3 className="text-lg font-black text-text-main">Flujo de Ventas</h3>
             </div>
-            <div className="h-[250px] w-full">
+            <div className="h-[200px] lg:h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
@@ -300,7 +300,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-red-50 border border-red-100 p-8 rounded-[40px] shadow-sm">
+          <div className="bg-red-50 border border-red-100 p-6 lg:p-8 rounded-[30px] lg:rounded-[40px] shadow-sm">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-red-500/10 text-red-500 rounded-xl">
                 <AlertCircle className="w-6 h-6" />
@@ -317,28 +317,28 @@ const Dashboard = () => {
 
       {/* Order Detail Modal */}
       {selectedPedido && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm">
-          <div className="bg-white rounded-[40px] p-10 max-w-lg w-full shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-300">
-            <div className="flex justify-between items-start mb-8">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-6 bg-black/20 backdrop-blur-sm">
+          <div className="bg-white rounded-[30px] lg:rounded-[40px] p-6 lg:p-10 max-w-lg w-full shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh]">
+            <div className="flex justify-between items-start mb-6 lg:mb-8">
               <div>
-                <h3 className="text-2xl font-black text-text-main">Detalle del Pedido</h3>
-                <p className="text-xs font-bold text-text-muted uppercase tracking-widest mt-1">ID: #{selectedPedido.id.toString().slice(-6)}</p>
+                <h3 className="text-xl lg:text-2xl font-black text-text-main">Detalle del Pedido</h3>
+                <p className="text-[10px] lg:text-xs font-bold text-text-muted uppercase tracking-widest mt-1">ID: #{selectedPedido.id.toString().slice(-6)}</p>
               </div>
               <button onClick={() => setSelectedPedido(null)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
-                <AlertCircle className="w-6 h-6 text-gray-400 rotate-45" />
+                <AlertCircle className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400 rotate-45" />
               </button>
             </div>
 
-            <div className="space-y-6 mb-10">
+            <div className="space-y-4 lg:space-y-6 mb-8 lg:mb-10">
               <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
-                <div className="text-xs font-bold text-text-muted uppercase">Cliente</div>
-                <div className="text-sm font-black text-text-main">{selectedPedido.cliente_nombre}</div>
+                <div className="text-[10px] lg:text-xs font-bold text-text-muted uppercase">Cliente</div>
+                <div className="text-xs lg:text-sm font-black text-text-main">{selectedPedido.cliente_nombre}</div>
               </div>
 
               <div className="space-y-3">
-                <div className="text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Productos</div>
+                <div className="text-[10px] lg:text-xs font-bold text-text-muted uppercase tracking-widest mb-2">Productos</div>
                 {JSON.parse(selectedPedido.items || '[]').map((item: any, i: number) => (
-                  <div key={i} className="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                  <div key={i} className="flex justify-between items-center text-xs lg:text-sm border-b border-gray-50 pb-2">
                     <div className="flex gap-2">
                       <span className="font-black text-primary">{item.cantidad}x</span>
                       <span className="text-text-main font-bold">{item.nombre}</span>
@@ -349,16 +349,16 @@ const Dashboard = () => {
               </div>
 
               <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                <div className="text-lg font-bold text-text-muted">Total</div>
-                <div className="text-3xl font-black text-primary">S/ {selectedPedido.total}</div>
+                <div className="text-base lg:text-lg font-bold text-text-muted">Total</div>
+                <div className="text-2xl lg:text-3xl font-black text-primary">S/ {selectedPedido.total}</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <button className="py-4 bg-gray-100 text-text-muted rounded-2xl font-bold text-sm hover:bg-gray-200 transition-all">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+              <button className="py-4 bg-gray-100 text-text-muted rounded-2xl font-bold text-xs lg:text-sm hover:bg-gray-200 transition-all">
                 Imprimir Comprobante
               </button>
-              <button className="py-4 bg-primary text-white rounded-2xl font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+              <button className="py-4 bg-primary text-white rounded-2xl font-bold text-xs lg:text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
                 Marcar como Entregado
               </button>
             </div>

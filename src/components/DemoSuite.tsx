@@ -20,7 +20,8 @@ import {
   AlertCircle,
   Plus,
   Minus,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -209,20 +210,20 @@ const TiendaView = () => {
         ]}
       />
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-black text-text-main tracking-tight">Catálogo Digital</h2>
-          <p className="text-text-muted mt-1 text-sm font-medium">Prueba a pedir varios productos para ver el flujo real.</p>
+          <h2 className="text-2xl lg:text-3xl font-black text-text-main tracking-tight">Catálogo Digital</h2>
+          <p className="text-text-muted mt-1 text-xs lg:text-sm font-medium">Prueba a pedir varios productos para ver el flujo real.</p>
         </div>
         
         {/* Floating Cart Button */}
         <button 
           onClick={() => setIsCartOpen(true)}
-          className="relative bg-white border border-gray-100 p-5 rounded-[24px] shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all group"
+          className="fixed bottom-6 right-6 lg:relative lg:bottom-0 lg:right-0 z-50 bg-white border border-gray-100 p-4 lg:p-5 rounded-[24px] shadow-2xl lg:shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all group"
         >
-          <ShoppingBag className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
+          <ShoppingBag className="w-6 h-6 lg:w-8 lg:h-8 text-primary group-hover:scale-110 transition-transform" />
           {cart.length > 0 && (
-            <div className="absolute -top-2 -right-2 w-7 h-7 bg-secondary text-white rounded-full flex items-center justify-center text-xs font-black shadow-lg animate-bounce">
+            <div className="absolute -top-2 -right-2 w-6 h-6 lg:w-7 lg:h-7 bg-secondary text-white rounded-full flex items-center justify-center text-[10px] lg:text-xs font-black shadow-lg animate-bounce">
               {cart.reduce((acc, item) => acc + item.cantidad, 0)}
             </div>
           )}
@@ -269,31 +270,31 @@ const TiendaView = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white w-full max-w-4xl rounded-[48px] overflow-hidden shadow-2xl flex flex-col md:flex-row"
+              className="relative bg-white w-full max-w-4xl rounded-[32px] lg:rounded-[48px] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] overflow-y-auto md:overflow-visible"
             >
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-6 right-6 z-10 p-3 bg-white/80 backdrop-blur-md rounded-2xl hover:bg-white transition-colors shadow-lg"
+                className="absolute top-4 right-4 lg:top-6 lg:right-6 z-10 p-2 lg:p-3 bg-white/80 backdrop-blur-md rounded-2xl hover:bg-white transition-colors shadow-lg"
               >
-                <X className="w-6 h-6 text-text-main" />
+                <X className="w-5 h-5 lg:w-6 lg:h-6 text-text-main" />
               </button>
 
-              <div className="md:w-1/2 h-80 md:h-auto relative">
+              <div className="md:w-1/2 h-64 sm:h-80 md:h-auto relative shrink-0">
                 <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
 
-              <div className="md:w-1/2 p-10 md:p-14 flex flex-col">
-                <div className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">{selectedProduct.category}</div>
-                <h3 className="text-4xl font-black text-text-main mb-6 leading-tight">{selectedProduct.name}</h3>
-                <p className="text-text-muted text-lg leading-relaxed mb-10 font-medium">
+              <div className="md:w-1/2 p-6 lg:p-14 flex flex-col">
+                <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em] mb-3 lg:mb-4">{selectedProduct.category}</div>
+                <h3 className="text-2xl lg:text-4xl font-black text-text-main mb-4 lg:mb-6 leading-tight">{selectedProduct.name}</h3>
+                <p className="text-sm lg:text-lg text-text-muted leading-relaxed mb-8 lg:mb-10 font-medium">
                   {selectedProduct.description}
                 </p>
                 
-                <div className="mt-auto flex items-center justify-between gap-8">
+                <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 lg:gap-8">
                   <div>
-                    <div className="text-xs font-bold text-text-light uppercase tracking-widest mb-1">Precio Unitario</div>
-                    <div className="text-3xl font-black text-primary">S/ {selectedProduct.price}.00</div>
+                    <div className="text-[10px] lg:text-xs font-bold text-text-light uppercase tracking-widest mb-1">Precio Unitario</div>
+                    <div className="text-2xl lg:text-3xl font-black text-primary">S/ {selectedProduct.price}.00</div>
                   </div>
                   <button 
                     onClick={() => {
@@ -301,9 +302,9 @@ const TiendaView = () => {
                       setSelectedProduct(null);
                       setIsCartOpen(true);
                     }}
-                    className="flex-1 bg-primary hover:bg-primary-dark text-white py-6 rounded-3xl font-black text-lg transition-all flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 hover:-translate-y-1 active:scale-95"
+                    className="w-full sm:w-auto flex-1 bg-primary hover:bg-primary-dark text-white py-5 lg:py-6 rounded-2xl lg:rounded-3xl font-black text-base lg:text-lg transition-all flex items-center justify-center gap-3 lg:gap-4 shadow-2xl shadow-primary/30 hover:-translate-y-1 active:scale-95"
                   >
-                    <ShoppingBag className="w-7 h-7" />
+                    <ShoppingBag className="w-6 h-6 lg:w-7 lg:h-7" />
                     Añadir al Pedido
                   </button>
                 </div>
@@ -329,7 +330,7 @@ const TiendaView = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-[450px] bg-white shadow-2xl z-[70] flex flex-col p-10"
+              className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-[70] flex flex-col p-6 lg:p-10"
             >
               <div className="flex justify-between items-center mb-10">
                 <h3 className="text-2xl font-black text-text-main">Tu Canasta</h3>
@@ -437,15 +438,15 @@ const AsistenteView = () => {
       color="secondary"
     />
     
-    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
       {/* Mobile Phone Mockup */}
-      <div className="flex justify-center">
-        <div className="w-[360px] h-[720px] bg-black rounded-[60px] p-4 shadow-2xl border-[12px] border-[#1a1a1a] relative overflow-hidden flex flex-col">
+      <div className="flex justify-center order-2 lg:order-1">
+        <div className="w-full max-w-[360px] aspect-[9/18] bg-black rounded-[40px] lg:rounded-[60px] p-3 lg:p-4 shadow-2xl border-[8px] lg:border-[12px] border-[#1a1a1a] relative overflow-hidden flex flex-col">
           {/* Phone Notch */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#1a1a1a] rounded-b-3xl z-20" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 lg:w-40 h-6 lg:h-8 bg-[#1a1a1a] rounded-b-2xl lg:rounded-b-3xl z-20" />
           
           {/* WhatsApp UI Inside Phone */}
-          <div className="flex-1 bg-[#e5ddd5] rounded-[40px] overflow-hidden flex flex-col relative shadow-inner">
+          <div className="flex-1 bg-[#e5ddd5] rounded-[30px] lg:rounded-[40px] overflow-hidden flex flex-col relative shadow-inner">
             {/* WhatsApp Header */}
             <div className="bg-[#075e54] pt-10 pb-4 px-6 flex items-center justify-between shadow-md relative z-10">
               <div className="flex items-center gap-3">
@@ -659,66 +660,66 @@ const InventarioView = () => {
         ]}
       />
 
-      <div className="bg-white border border-gray-100 rounded-[40px] overflow-hidden shadow-sm">
-        <div className="p-10 border-b border-gray-50 flex justify-between items-center">
+      <div className="bg-white border border-gray-100 rounded-[30px] lg:rounded-[40px] overflow-hidden shadow-sm">
+        <div className="p-6 lg:p-10 border-b border-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h3 className="text-xl font-black text-text-main">Catálogo de Productos</h3>
           <button 
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-primary text-white px-8 py-3 rounded-2xl text-xs font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center gap-2"
+            className="w-full sm:w-auto bg-primary text-white px-8 py-3 rounded-2xl text-xs font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Añadir Producto
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-0">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Producto</th>
-                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Categoría</th>
-                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Stock Actual</th>
-                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Estado</th>
-                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest text-right">Acciones</th>
+                <th className="px-6 lg:px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Producto</th>
+                <th className="px-6 lg:px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Categoría</th>
+                <th className="px-6 lg:px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Stock Actual</th>
+                <th className="px-6 lg:px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Estado</th>
+                <th className="px-6 lg:px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {products.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50/30 transition-colors">
-                  <td className="px-10 py-8">
-                    <div className="text-base font-black text-text-main">{product.name}</div>
-                    <div className="text-xs font-bold text-text-muted mt-1">S/ {product.price}.00</div>
+                  <td className="px-6 lg:px-10 py-6 lg:py-8">
+                    <div className="text-sm lg:text-base font-black text-text-main">{product.name}</div>
+                    <div className="text-[10px] lg:text-xs font-bold text-text-muted mt-1">S/ {product.price}.00</div>
                   </td>
-                  <td className="px-10 py-8">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">
+                  <td className="px-6 lg:px-10 py-6 lg:py-8">
+                    <span className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full whitespace-nowrap">
                       {product.category}
                     </span>
                   </td>
-                  <td className="px-10 py-8">
-                    <div className="flex items-center gap-3">
-                      <div className="text-base font-black text-text-main">{product.stock}</div>
-                      <div className="text-xs text-gray-400 font-bold">/ {product.minStock} min.</div>
+                  <td className="px-6 lg:px-10 py-6 lg:py-8">
+                    <div className="flex items-center gap-2 lg:gap-3">
+                      <div className="text-sm lg:text-base font-black text-text-main">{product.stock}</div>
+                      <div className="text-[10px] lg:text-xs text-gray-400 font-bold">/ {product.minStock} min.</div>
                     </div>
                   </td>
-                  <td className="px-10 py-8">
+                  <td className="px-6 lg:px-10 py-6 lg:py-8">
                     {product.stock <= product.minStock ? (
-                      <div className="flex items-center gap-2 text-red-500 font-black text-[10px] uppercase tracking-widest">
-                        <AlertCircle className="w-4 h-4" />
+                      <div className="flex items-center gap-2 text-red-500 font-black text-[9px] lg:text-[10px] uppercase tracking-widest whitespace-nowrap">
+                        <AlertCircle className="w-3 h-3 lg:w-4 lg:h-4" />
                         Stock Crítico
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2 text-green-500 font-black text-[10px] uppercase tracking-widest">
-                        <CheckCircle2 className="w-4 h-4" />
+                      <div className="flex items-center gap-2 text-green-500 font-black text-[9px] lg:text-[10px] uppercase tracking-widest whitespace-nowrap">
+                        <CheckCircle2 className="w-3 h-3 lg:w-4 lg:h-4" />
                         Saludable
                       </div>
                     )}
                   </td>
-                  <td className="px-10 py-8 text-right">
+                  <td className="px-6 lg:px-10 py-6 lg:py-8 text-right">
                     <button 
                       onClick={() => {
                         setSelectedProduct(product);
                         setIsRestockModalOpen(true);
                       }}
-                      className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 ml-auto"
+                      className="text-[9px] lg:text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 ml-auto whitespace-nowrap"
                     >
                       <Plus className="w-3 h-3" />
                       Reponer
@@ -885,15 +886,15 @@ const ConfiguracionView = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Perfil del Negocio */}
-        <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
-          <div className="flex items-center gap-4 mb-10">
+        <div className="bg-white border border-gray-100 p-6 lg:p-10 rounded-[30px] lg:rounded-[40px] shadow-sm">
+          <div className="flex items-center gap-4 mb-8 lg:mb-10">
             <div className="p-3 bg-primary/10 text-primary rounded-2xl">
               <User className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-black text-text-main">Perfil del Negocio</h3>
           </div>
           
-          <div className="space-y-8">
+          <div className="space-y-6 lg:space-y-8">
             <div className="space-y-3">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nombre Comercial</label>
               <input type="text" defaultValue="La Pescadería de Luis" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" />
@@ -913,15 +914,15 @@ const ConfiguracionView = () => {
         </div>
 
         {/* Configuración de IA */}
-        <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
-          <div className="flex items-center gap-4 mb-10">
+        <div className="bg-white border border-gray-100 p-6 lg:p-10 rounded-[30px] lg:rounded-[40px] shadow-sm">
+          <div className="flex items-center gap-4 mb-8 lg:mb-10">
             <div className="p-3 bg-secondary/10 text-secondary rounded-2xl">
               <MessageCircle className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-black text-text-main">Personalidad de MarIA</h3>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6 lg:space-y-8">
             <div className="space-y-3">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tono de Voz</label>
               <select className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30 appearance-none">
@@ -971,39 +972,62 @@ const ConfiguracionView = () => {
 export default function DemoSuite() {
   const [activeRole, setActiveRole] = useState<'cliente' | 'emprendedor'>('emprendedor');
   const [activeTab, setActiveTab] = useState('gestion');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Handle role change and set default tab for each role
   const handleRoleChange = (role: 'cliente' | 'emprendedor') => {
     setActiveRole(role);
     setActiveTab(role === 'cliente' ? 'tienda' : 'gestion');
+    setIsSidebarOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-text-main flex overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#f8f9fa] text-text-main flex overflow-hidden font-sans relative">
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
-      <aside className="w-80 bg-white border-r border-gray-100 flex flex-col p-10 shrink-0 shadow-sm relative z-50">
-        <div className="flex items-center gap-4 mb-12">
-          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/20">
-            <LayoutDashboard className="w-8 h-8 text-white" />
+      <aside className={`
+        fixed inset-y-0 left-0 w-80 bg-white border-r border-gray-100 flex flex-col p-8 lg:p-10 shrink-0 shadow-sm z-[70] transition-transform duration-300 lg:relative lg:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="flex items-center justify-between mb-12 lg:mb-16">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 lg:w-14 lg:h-14 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/20">
+              <LayoutDashboard className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
+            </div>
+            <div>
+              <span className="font-display text-2xl lg:text-3xl font-black tracking-tighter block leading-none">Mar<em className="text-primary not-italic">IA</em></span>
+              <span className="text-[10px] lg:text-[11px] font-black text-gray-400 uppercase tracking-[0.25em]">Demo Suite</span>
+            </div>
           </div>
-          <div>
-            <span className="font-display text-3xl font-black tracking-tighter block leading-none">Mar<em className="text-primary not-italic">IA</em></span>
-            <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.25em]">Demo Suite</span>
-          </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors">
+            <X className="w-6 h-6 text-gray-400" />
+          </button>
         </div>
 
         {/* Role Switcher */}
-        <div className="bg-gray-50 p-1.5 rounded-2xl flex gap-1 mb-12 border border-gray-100">
+        <div className="bg-gray-50 p-1.5 rounded-2xl flex gap-1 mb-10 lg:mb-12 border border-gray-100">
           <button 
             onClick={() => handleRoleChange('cliente')}
-            className={`flex-1 py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${activeRole === 'cliente' ? 'bg-white text-primary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-text-main'}`}
+            className={`flex-1 py-3 rounded-xl text-[10px] lg:text-xs font-black transition-all flex items-center justify-center gap-2 ${activeRole === 'cliente' ? 'bg-white text-primary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-text-main'}`}
           >
             <User className="w-4 h-4" />
             Cliente
           </button>
           <button 
             onClick={() => handleRoleChange('emprendedor')}
-            className={`flex-1 py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${activeRole === 'emprendedor' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-text-main'}`}
+            className={`flex-1 py-3 rounded-xl text-[10px] lg:text-xs font-black transition-all flex items-center justify-center gap-2 ${activeRole === 'emprendedor' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-text-main'}`}
           >
             <Briefcase className="w-4 h-4" />
             Dueño
@@ -1011,29 +1035,29 @@ export default function DemoSuite() {
         </div>
 
         {/* Profile Card */}
-        <div className="mb-12 p-6 bg-gradient-to-br from-gray-50 to-white rounded-[32px] border border-gray-100 shadow-sm">
+        <div className="mb-10 lg:mb-12 p-5 lg:p-6 bg-gradient-to-br from-gray-50 to-white rounded-[32px] border border-gray-100 shadow-sm">
           <div className="flex items-center gap-4 mb-4">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${activeRole === 'cliente' ? 'bg-primary' : 'bg-secondary'}`}>
+            <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${activeRole === 'cliente' ? 'bg-primary' : 'bg-secondary'}`}>
               {activeRole === 'cliente' ? 'JD' : 'LG'}
             </div>
             <div>
               <div className="text-sm font-black text-text-main leading-none mb-1">
                 {activeRole === 'cliente' ? 'Juan Demo' : 'Luis Garcia'}
               </div>
-              <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+              <div className="text-[9px] lg:text-[10px] font-bold text-text-muted uppercase tracking-widest">
                 {activeRole === 'cliente' ? 'Cliente Potencial' : 'Dueño de Negocio'}
               </div>
             </div>
           </div>
-          <div className="text-[10px] text-text-muted leading-relaxed font-medium">
+          <div className="text-[9px] lg:text-[10px] text-text-muted leading-relaxed font-medium">
             {activeRole === 'cliente' 
               ? 'Explora la tienda y haz pedidos como lo harían tus clientes reales.' 
               : 'Gestiona ventas, inventario y configura tu IA desde el panel administrativo.'}
           </div>
         </div>
 
-        <nav className="flex-1 space-y-4">
-          <div className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-8 ml-2">
+        <nav className="flex-1 space-y-3 lg:space-y-4 overflow-y-auto custom-scrollbar pr-2">
+          <div className="text-[10px] lg:text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 lg:mb-8 ml-2">
             {activeRole === 'cliente' ? 'Experiencia Cliente' : 'Panel Administrativo'}
           </div>
           
@@ -1043,13 +1067,13 @@ export default function DemoSuite() {
                 icon={ShoppingBag} 
                 label="Tienda Virtual" 
                 active={activeTab === 'tienda'} 
-                onClick={() => setActiveTab('tienda')} 
+                onClick={() => { setActiveTab('tienda'); setIsSidebarOpen(false); }} 
               />
               <SidebarItem 
                 icon={MessageCircle} 
                 label="Asistente IA" 
                 active={activeTab === 'asistente'} 
-                onClick={() => setActiveTab('asistente')} 
+                onClick={() => { setActiveTab('asistente'); setIsSidebarOpen(false); }} 
               />
             </>
           ) : (
@@ -1058,28 +1082,28 @@ export default function DemoSuite() {
                 icon={BarChart3} 
                 label="Gestión de Ventas" 
                 active={activeTab === 'gestion'} 
-                onClick={() => setActiveTab('gestion')} 
+                onClick={() => { setActiveTab('gestion'); setIsSidebarOpen(false); }} 
               />
               <SidebarItem 
                 icon={Package} 
                 label="Inventario" 
                 active={activeTab === 'inventario'} 
-                onClick={() => setActiveTab('inventario')} 
+                onClick={() => { setActiveTab('inventario'); setIsSidebarOpen(false); }} 
               />
               <SidebarItem 
                 icon={Settings} 
                 label="Configuración" 
                 active={activeTab === 'configuracion'} 
-                onClick={() => setActiveTab('configuracion')} 
+                onClick={() => { setActiveTab('configuracion'); setIsSidebarOpen(false); }} 
               />
             </>
           )}
         </nav>
 
-        <div className="mt-auto pt-10 border-t border-gray-100">
-          <Link to="/" className="flex items-center gap-4 text-gray-400 hover:text-primary transition-all text-base font-bold group">
-            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-              <ArrowLeft className="w-5 h-5" />
+        <div className="mt-auto pt-8 lg:pt-10 border-t border-gray-100">
+          <Link to="/" className="flex items-center gap-4 text-gray-400 hover:text-primary transition-all text-sm lg:text-base font-bold group">
+            <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+              <ArrowLeft className="w-4 h-4 lg:w-5 lg:h-5" />
             </div>
             Volver a la Web
           </Link>
@@ -1087,38 +1111,46 @@ export default function DemoSuite() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Header */}
-        <header className="h-28 bg-white border-b border-gray-100 flex items-center justify-between px-12 shrink-0">
-          <div className="flex items-center gap-5 bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 w-[500px] focus-within:border-primary/30 focus-within:ring-8 focus-within:ring-primary/5 transition-all">
-            <Search className="w-6 h-6 text-gray-400" />
-            <input type="text" placeholder="Buscar pedidos, productos, clientes..." className="bg-transparent border-none text-base focus:outline-none text-text-main w-full font-bold" />
+        <header className="h-20 lg:h-28 bg-white border-b border-gray-100 flex items-center justify-between px-6 lg:px-12 shrink-0">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              <Menu className="w-6 h-6 text-text-main" />
+            </button>
+            <div className="hidden md:flex items-center gap-5 bg-gray-50 border border-gray-100 rounded-2xl px-6 py-3 lg:py-4 w-[300px] lg:w-[500px] focus-within:border-primary/30 focus-within:ring-8 focus-within:ring-primary/5 transition-all">
+              <Search className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400" />
+              <input type="text" placeholder="Buscar..." className="bg-transparent border-none text-sm lg:text-base focus:outline-none text-text-main w-full font-bold" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-10">
+          <div className="flex items-center gap-4 lg:gap-10">
             <button className="relative text-gray-400 hover:text-primary transition-colors">
-              <Bell className="w-7 h-7" />
-              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-primary rounded-full border-2 border-white" />
+              <Bell className="w-6 h-6 lg:w-7 lg:h-7" />
+              <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-primary rounded-full border-2 border-white" />
             </button>
-            <div className="h-12 w-px bg-gray-100" />
-            <div className="flex items-center gap-5">
+            <div className="h-8 lg:h-12 w-px bg-gray-100" />
+            <div className="flex items-center gap-3 lg:gap-5">
               <div className="text-right hidden sm:block">
-                <div className="text-base font-black text-text-main leading-none mb-1">
+                <div className="text-sm lg:text-base font-black text-text-main leading-none mb-1">
                   {activeRole === 'cliente' ? 'Juan Demo' : 'Luis Garcia'}
                 </div>
-                <div className={`text-[11px] font-bold uppercase tracking-[0.2em] ${activeRole === 'cliente' ? 'text-primary' : 'text-secondary'}`}>
+                <div className={`text-[9px] lg:text-[11px] font-bold uppercase tracking-[0.2em] ${activeRole === 'cliente' ? 'text-primary' : 'text-secondary'}`}>
                   {activeRole === 'cliente' ? 'Cliente Activo' : 'Administrador Pro'}
                 </div>
               </div>
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black border-4 border-white shadow-xl bg-gradient-to-br ${activeRole === 'cliente' ? 'from-primary to-primary-dark' : 'from-secondary to-secondary-dark'}`}>
-                <User className="w-7 h-7" />
+              <div className={`w-10 h-10 lg:w-14 lg:h-14 rounded-xl lg:rounded-2xl flex items-center justify-center text-white font-black border-2 lg:border-4 border-white shadow-xl bg-gradient-to-br ${activeRole === 'cliente' ? 'from-primary to-primary-dark' : 'from-secondary to-secondary-dark'}`}>
+                <User className="w-5 h-5 lg:w-7 lg:h-7" />
               </div>
             </div>
           </div>
         </header>
 
         {/* View Content */}
-        <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-12 custom-scrollbar">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
