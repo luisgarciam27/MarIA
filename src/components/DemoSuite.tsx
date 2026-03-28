@@ -403,7 +403,7 @@ const TiendaView = () => {
       const orderId = insertedOrder?.[0]?.id || 'N/A';
       
       const waMessage = encodeURIComponent(
-        `¡Hola MarIA! 👋\n\nORDEN: #${orderId}\n\n*Productos:*\n${itemsSummary}\n\n*Total:* S/ ${totalCart}.00\n*Método de Pago:* ${paymentInfo}\n\n_He realizado el pedido y en breve realizaré el pago._`
+        `¡Hola MarIA! 👋\n\nID de Pedido: #${orderId}\n\n*Productos:*\n${itemsSummary}\n\n*Total:* S/ ${totalCart}.00\n*Método de Pago:* ${paymentInfo}\n\n_He realizado el pedido y en breve realizaré el pago._`
       );
       const waUrl = `https://wa.me/51975736687?text=${waMessage}`;
 
