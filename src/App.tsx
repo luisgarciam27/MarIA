@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageCircle, ShoppingBag, BarChart3, ArrowRight, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { MessageCircle, ShoppingBag, BarChart3, ArrowRight, ChevronDown, CheckCircle2, Sparkles } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DemoSuite from './components/DemoSuite';
 import { supabase } from './lib/supabase';
@@ -40,7 +40,10 @@ const Navbar = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => {
         <div className="hidden md:flex items-center gap-8">
           <a href="#soluciones" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">Soluciones</a>
           <a href="#precios" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">Precios</a>
-          <a href="#faq" className="text-sm font-medium text-text-muted hover:text-primary transition-colors">FAQ</a>
+          <Link to="/demo" className="text-sm font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4" />
+            Ver Demo
+          </Link>
           <button onClick={onOpenWhatsApp} className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
             Quiero MarIA 💬
           </button>
@@ -79,9 +82,10 @@ const Hero = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => (
         <button onClick={onOpenWhatsApp} className="btn-primary">
           💬 Quiero MarIA para mi negocio
         </button>
-        <a href="#soluciones" className="btn-secondary">
-          Ver cómo funciona →
-        </a>
+        <Link to="/demo" className="btn-secondary flex items-center justify-center gap-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          Probar Demo Interactiva
+        </Link>
       </div>
 
       {/* 4 Benefit Cards */}
@@ -188,45 +192,54 @@ const Pillars = () => (
 
       <div className="grid md:grid-cols-2 gap-12">
         {/* Pillar 1: Tienda */}
-        <div className="bg-bg-main rounded-[40px] p-10 border border-primary/5 hover:border-primary/20 transition-all group">
+        <div className="bg-bg-main rounded-[40px] p-10 border border-primary/5 hover:border-primary/20 transition-all group flex flex-col">
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">🛍️</div>
           <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">Tienda Virtual</h3>
           <p className="text-text-muted leading-relaxed mb-6">Un catálogo profesional que enamora a tus clientes. Carrito de compras, filtros y buscador inteligente.</p>
-          <ul className="space-y-3">
+          <ul className="space-y-3 mb-8">
             {["Catálogo interactivo", "Carrito de compras", "Pago con Yape/Plin"].map((item, i) => (
               <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
                 <CheckCircle2 className="w-5 h-5 text-primary" /> {item}
               </li>
             ))}
           </ul>
+          <Link to="/demo" className="mt-auto inline-flex items-center gap-2 text-primary font-bold text-sm hover:gap-3 transition-all">
+            Probar Tienda <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
         {/* Pillar 2: Dashboard */}
-        <div className="bg-bg-main rounded-[40px] p-10 border border-secondary/5 hover:border-secondary/20 transition-all group">
+        <div className="bg-bg-main rounded-[40px] p-10 border border-secondary/5 hover:border-secondary/20 transition-all group flex flex-col">
           <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-secondary/20 group-hover:scale-110 transition-transform">📊</div>
           <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">Panel Admin</h3>
           <p className="text-text-muted leading-relaxed mb-6">Control total de tus ventas, clientes y stock. Toma decisiones basadas en datos reales, no en suposiciones.</p>
-          <ul className="space-y-3">
+          <ul className="space-y-3 mb-8">
             {["Reportes de ventas", "Gestión de pedidos", "Base de clientes"].map((item, i) => (
               <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
                 <CheckCircle2 className="w-5 h-5 text-secondary" /> {item}
               </li>
             ))}
           </ul>
+          <Link to="/demo" className="mt-auto inline-flex items-center gap-2 text-secondary-dark font-bold text-sm hover:gap-3 transition-all">
+            Ver Dashboard <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
         {/* Pillar 3: Bot */}
-        <div className="bg-bg-main rounded-[40px] p-10 border border-accent/5 hover:border-accent/20 transition-all group">
+        <div className="bg-bg-main rounded-[40px] p-10 border border-accent/5 hover:border-accent/20 transition-all group flex flex-col">
           <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-2xl mb-8 shadow-lg shadow-accent/20 group-hover:scale-110 transition-transform">💬</div>
           <h3 className="font-display text-3xl font-extrabold text-text-main mb-4">WhatsApp Bot</h3>
           <p className="text-text-muted leading-relaxed mb-6">Inteligencia Artificial que atiende como un experto. Resuelve dudas, envía precios y cierra ventas 24/7.</p>
-          <ul className="space-y-3">
+          <ul className="space-y-3 mb-8">
             {["IA con tono peruano", "Atención 24/7", "Cierre de ventas"].map((item, i) => (
               <li key={i} className="flex items-center gap-3 text-sm font-medium text-text-main">
                 <CheckCircle2 className="w-5 h-5 text-accent" /> {item}
               </li>
             ))}
           </ul>
+          <Link to="/demo" className="mt-auto inline-flex items-center gap-2 text-accent font-bold text-sm hover:gap-3 transition-all">
+            Hablar con MarIA <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
         {/* Pillar 4: Google Maps */}
@@ -256,22 +269,31 @@ const WhatsAppCatalog = () => {
   ];
 
   const handleAddOrder = async (product: any) => {
-    const { error } = await supabase.from('pedidos').insert([
-      {
-        cliente_nombre: 'Cliente Web',
-        telefono: 'Web',
-        items: JSON.stringify([{ nombre: product.name, cantidad: 1, precio: product.price }]),
-        total: parseFloat(product.price.replace('S/ ', '')),
-        estado: 'pendiente',
-        origen: 'web'
-      }
-    ]);
+    const waMessage = encodeURIComponent(
+      `¡Hola! 👋 Quisiera realizar un pedido de:\n\n1x ${product.name} (${product.price})\n\n*Total: ${product.price}*\n\nGracias.`
+    );
+    const waUrl = `https://wa.me/51975736687?text=${waMessage}`;
 
-    if (error) {
-      console.error('Error:', error);
-      alert('Hubo un error al procesar tu pedido.');
-    } else {
-      alert('¡Pedido enviado al Dashboard!');
+    try {
+      const { error } = await supabase.from('pedidos').insert([
+        {
+          cliente_nombre: 'Cliente Web',
+          telefono: 'Web',
+          items: JSON.stringify([{ nombre: product.name, cantidad: 1, precio: product.price }]),
+          total: parseFloat(product.price.replace('S/ ', '')),
+          estado: 'pendiente',
+          origen: 'web'
+        }
+      ]);
+
+      if (error) throw error;
+      
+      // Redirect to WhatsApp
+      window.open(waUrl, '_blank');
+      alert('¡Pedido enviado al Dashboard y redirigiendo a WhatsApp!');
+    } catch (err: any) {
+      console.error('Error:', err);
+      alert(`Hubo un error al procesar tu pedido: ${err.message}`);
     }
   };
 
@@ -635,9 +657,10 @@ const CTA = ({ onOpenWhatsApp }: { onOpenWhatsApp: () => void }) => (
         <button onClick={onOpenWhatsApp} className="btn-primary">
           💬 Empezar ahora por WhatsApp
         </button>
-        <a href="#precios" className="btn-secondary">
-          Ver planes →
-        </a>
+        <Link to="/demo" className="btn-secondary flex items-center justify-center gap-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          Probar Demo Interactiva
+        </Link>
       </div>
       <div className="mt-6 text-xs text-text-light">
         ✅ <strong className="text-secondary-dark">15 días de garantía</strong> · Sin contrato · Sin letras chicas

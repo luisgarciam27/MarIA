@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShoppingBag, 
@@ -11,9 +11,16 @@ import {
   Bell,
   Search,
   User,
+  Briefcase,
   Info,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  Plus,
+  Minus,
+  X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -62,56 +69,173 @@ const DemoGuide = ({ title, description, steps, color = "primary" }: { title: st
 );
 
 const TiendaView = () => {
+  const [cart, setCart] = useState<any[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
   const products = [
-    { id: 1, name: "Cebiche Clásico", price: 35, image: "https://picsum.photos/seed/cebiche/400/400", category: "Entradas" },
-    { id: 2, name: "Lomo Saltado", price: 42, image: "https://picsum.photos/seed/lomo/400/400", category: "Fondos" },
-    { id: 3, name: "Arroz con Mariscos", price: 38, image: "https://picsum.photos/seed/mariscos/400/400", category: "Fondos" },
-    { id: 4, name: "Chicha Morada 1L", price: 15, image: "https://picsum.photos/seed/chicha/400/400", category: "Bebidas" },
-    { id: 5, name: "Pisco Sour", price: 25, image: "https://picsum.photos/seed/pisco/400/400", category: "Bebidas" },
-    { id: 6, name: "Suspiro a la Limeña", price: 18, image: "https://picsum.photos/seed/suspiro/400/400", category: "Postres" },
+    { 
+      id: 1, 
+      name: "Cebiche Clásico", 
+      price: 35, 
+      image: "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=800&auto=format&fit=crop", 
+      category: "Entradas",
+      description: "Pescado fresco del día marinado en limón de pica, acompañado de camote glaseado, choclo desgranado y canchita serrana."
+    },
+    { 
+      id: 2, 
+      name: "Lomo Saltado", 
+      price: 42, 
+      image: "https://images.unsplash.com/photo-1594179047519-f347310d3322?w=800&auto=format&fit=crop", 
+      category: "Fondos",
+      description: "Trozos de lomo fino salteados al wok con cebolla roja, tomate, ají amarillo y un toque de cilantro. Servido con papas fritas y arroz blanco."
+    },
+    { 
+      id: 3, 
+      name: "Arroz con Mariscos", 
+      price: 38, 
+      image: "https://images.unsplash.com/photo-1512058560366-cd2427ff56f3?w=800&auto=format&fit=crop", 
+      category: "Fondos",
+      description: "Arroz meloso con mixtura de mariscos frescos, base de ají panca y un toque de vino blanco. Coronado con salsa criolla."
+    },
+    { 
+      id: 4, 
+      name: "Chicha Morada 1L", 
+      price: 15, 
+      image: "https://images.unsplash.com/photo-1544145945-f904253d0c7b?w=800&auto=format&fit=crop", 
+      category: "Bebidas",
+      description: "Bebida tradicional peruana a base de maíz morado, piña, manzana y canela. 100% natural."
+    },
+    { 
+      id: 5, 
+      name: "Pisco Sour", 
+      price: 25, 
+      image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800&auto=format&fit=crop", 
+      category: "Bebidas",
+      description: "Cóctel bandera del Perú. Pisco quebranta, jarabe de goma, limón, clara de huevo y amargo de angostura."
+    },
+    { 
+      id: 6, 
+      name: "Suspiro a la Limeña", 
+      price: 18, 
+      image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop", 
+      category: "Postres",
+      description: "Dulce de leche suave y cremoso coronado con merengue al oporto y una pizca de canela."
+    },
   ];
 
-  const handleAddOrder = async (product: any) => {
-    const { error } = await supabase.from('pedidos').insert([
-      {
-        cliente_nombre: 'Cliente Demo',
-        telefono: 'Demo-999',
-        items: JSON.stringify([{ nombre: product.name, cantidad: 1, precio: `S/ ${product.price}.00` }]),
-        total: product.price,
-        estado: 'pendiente',
-        origen: 'web'
+  const addToCart = (product: any) => {
+    setCart(prev => {
+      const existing = prev.find(item => item.id === product.id);
+      if (existing) {
+        return prev.map(item => item.id === product.id ? { ...item, cantidad: item.cantidad + 1 } : item);
       }
-    ]);
+      return [...prev, { ...product, cantidad: 1 }];
+    });
+  };
 
-    if (error) {
-      console.error('Error:', error);
-    } else {
-      alert(`¡Pedido de ${product.name} enviado! Ahora revisa la pestaña de Gestión de Ventas para ver cómo llega.`);
+  const removeFromCart = (id: number) => {
+    setCart(prev => prev.filter(item => item.id !== id));
+  };
+
+  const totalCart = cart.reduce((acc, item) => acc + (item.price * item.cantidad), 0);
+
+  const [orderSuccess, setOrderSuccess] = useState(false);
+
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleCheckout = async () => {
+    if (cart.length === 0 || isCheckingOut) return;
+
+    setIsCheckingOut(true);
+    const itemsSummary = cart.map(item => `${item.cantidad}x ${item.name} (S/ ${item.price}.00)` ).join('\n');
+    const waMessage = encodeURIComponent(
+      `¡Hola! 👋 Quisiera realizar un pedido:\n\n${itemsSummary}\n\n*Total: S/ ${totalCart}.00*\n\nGracias.`
+    );
+    const waUrl = `https://wa.me/51975736687?text=${waMessage}`;
+
+    try {
+      const { error } = await supabase.from('pedidos').insert([
+        {
+          cliente_nombre: 'Cliente Demo',
+          telefono: 'Demo-999',
+          items: JSON.stringify(cart.map(item => ({ nombre: item.name, cantidad: item.cantidad, precio: `S/ ${item.price}.00` }))),
+          total: totalCart,
+          estado: 'pendiente',
+          origen: 'web'
+        }
+      ]);
+
+      if (error) throw error;
+
+      setCart([]);
+      setIsCartOpen(false);
+      setOrderSuccess(true);
+      
+      // Redirect to WhatsApp after a short delay to show the success message
+      setTimeout(() => {
+        window.open(waUrl, '_blank');
+        setOrderSuccess(false);
+      }, 2000);
+
+    } catch (err: any) {
+      console.error('Error al procesar el pedido:', err);
+      alert('Hubo un error al procesar tu pedido. Por favor, intenta de nuevo.');
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+      {orderSuccess && (
+        <motion.div 
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }}
+          className="fixed top-10 left-1/2 -translate-x-1/2 z-[200] bg-green-500 text-white px-8 py-4 rounded-2xl font-black shadow-2xl flex items-center gap-4"
+        >
+          <CheckCircle2 className="w-6 h-6" />
+          ¡Pedido enviado con éxito! Ve a la pestaña de Gestión para verlo.
+        </motion.div>
+      )}
       <DemoGuide 
         title="Vista del Cliente (Tienda Virtual)"
         description="Así se verá tu negocio de cara al cliente. Una tienda profesional donde el proceso de pedido es simple: el cliente elige, pide y la orden llega automáticamente a tu panel de gestión para que puedas prepararla sin demoras."
         steps={[
-          "El cliente navega por tu carta digital",
-          "Añade productos al carrito con un toque",
-          "El pedido se sincroniza con tu panel al instante"
+          "Haz clic en un producto para ver sus detalles",
+          "Añade productos a la canasta desde el detalle",
+          "Finaliza la compra y mira el Dashboard"
         ]}
       />
 
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-black text-text-main tracking-tight">Catálogo Digital</h2>
-          <p className="text-text-muted mt-1 text-sm font-medium">Prueba a pedir algo para ver el flujo completo.</p>
+          <p className="text-text-muted mt-1 text-sm font-medium">Prueba a pedir varios productos para ver el flujo real.</p>
         </div>
+        
+        {/* Floating Cart Button */}
+        <button 
+          onClick={() => setIsCartOpen(true)}
+          className="relative bg-white border border-gray-100 p-5 rounded-[24px] shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all group"
+        >
+          <ShoppingBag className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
+          {cart.length > 0 && (
+            <div className="absolute -top-2 -right-2 w-7 h-7 bg-secondary text-white rounded-full flex items-center justify-center text-xs font-black shadow-lg animate-bounce">
+              {cart.reduce((acc, item) => acc + item.cantidad, 0)}
+            </div>
+          )}
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
         {products.map((p) => (
-          <div key={p.id} className="group bg-white border border-gray-100 rounded-[40px] overflow-hidden hover:border-primary/30 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5">
+          <div 
+            key={p.id} 
+            onClick={() => setSelectedProduct(p)}
+            className="group bg-white border border-gray-100 rounded-[40px] overflow-hidden hover:border-primary/30 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 cursor-pointer"
+          >
             <div className="relative h-64 overflow-hidden">
               <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               <div className="absolute top-5 right-5 bg-white/95 backdrop-blur-md px-5 py-2 rounded-2xl text-base font-black text-primary shadow-sm border border-gray-100">
@@ -121,135 +245,835 @@ const TiendaView = () => {
             <div className="p-8">
               <div className="text-[10px] font-black text-primary uppercase tracking-[0.25em] mb-3">{p.category}</div>
               <h3 className="text-2xl font-bold text-text-main mb-8">{p.name}</h3>
-              <button 
-                onClick={() => handleAddOrder(p)}
-                className="w-full bg-primary hover:bg-primary-dark text-white py-5 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary/20 hover:-translate-y-1 active:scale-95"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                Añadir al Pedido
-              </button>
+              <div className="w-full bg-gray-50 group-hover:bg-primary group-hover:text-white text-text-muted py-5 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-3">
+                Ver Detalles
+                <ArrowRight className="w-5 h-5" />
+              </div>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Product Detail Modal */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProduct(null)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white w-full max-w-4xl rounded-[48px] overflow-hidden shadow-2xl flex flex-col md:flex-row"
+            >
+              <button 
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-6 right-6 z-10 p-3 bg-white/80 backdrop-blur-md rounded-2xl hover:bg-white transition-colors shadow-lg"
+              >
+                <X className="w-6 h-6 text-text-main" />
+              </button>
+
+              <div className="md:w-1/2 h-80 md:h-auto relative">
+                <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              </div>
+
+              <div className="md:w-1/2 p-10 md:p-14 flex flex-col">
+                <div className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">{selectedProduct.category}</div>
+                <h3 className="text-4xl font-black text-text-main mb-6 leading-tight">{selectedProduct.name}</h3>
+                <p className="text-text-muted text-lg leading-relaxed mb-10 font-medium">
+                  {selectedProduct.description}
+                </p>
+                
+                <div className="mt-auto flex items-center justify-between gap-8">
+                  <div>
+                    <div className="text-xs font-bold text-text-light uppercase tracking-widest mb-1">Precio Unitario</div>
+                    <div className="text-3xl font-black text-primary">S/ {selectedProduct.price}.00</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      addToCart(selectedProduct);
+                      setSelectedProduct(null);
+                      setIsCartOpen(true);
+                    }}
+                    className="flex-1 bg-primary hover:bg-primary-dark text-white py-6 rounded-3xl font-black text-lg transition-all flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 hover:-translate-y-1 active:scale-95"
+                  >
+                    <ShoppingBag className="w-7 h-7" />
+                    Añadir al Pedido
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Cart Drawer Overlay */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCartOpen(false)}
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60]"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 h-full w-[450px] bg-white shadow-2xl z-[70] flex flex-col p-10"
+            >
+              <div className="flex justify-between items-center mb-10">
+                <h3 className="text-2xl font-black text-text-main">Tu Canasta</h3>
+                <button onClick={() => setIsCartOpen(false)} className="p-3 hover:bg-gray-100 rounded-2xl transition-colors">
+                  <ArrowLeft className="w-6 h-6 text-gray-400 rotate-180" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+                {cart.length === 0 ? (
+                  <div className="text-center py-20">
+                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <ShoppingBag className="w-10 h-10 text-gray-300" />
+                    </div>
+                    <p className="text-text-muted font-bold">Tu canasta está vacía</p>
+                  </div>
+                ) : (
+                  cart.map((item) => (
+                    <div key={item.id} className="flex gap-5 bg-gray-50 p-5 rounded-3xl border border-gray-100 group">
+                      <img src={item.image} alt={item.name} className="w-20 h-20 rounded-2xl object-cover" />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="font-bold text-text-main">{item.name}</h4>
+                          <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                            <Package className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="text-xs text-text-muted mb-3">S/ {item.price}.00 x {item.cantidad}</div>
+                        <div className="font-black text-primary">S/ {item.price * item.cantidad}.00</div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="mt-10 pt-10 border-t border-gray-100">
+                <div className="flex justify-between items-center mb-8">
+                  <span className="text-lg font-bold text-text-muted">Total a pagar:</span>
+                  <span className="text-3xl font-black text-text-main">S/ {totalCart}.00</span>
+                </div>
+                <button 
+                  onClick={handleCheckout}
+                  disabled={cart.length === 0 || isCheckingOut}
+                  className={`w-full py-6 rounded-[24px] font-black text-lg transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-4 ${
+                    isCheckingOut || cart.length === 0
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-primary hover:bg-primary-dark text-white shadow-primary/30'
+                  }`}
+                >
+                  {isCheckingOut ? (
+                    <>
+                      <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                      Procesando...
+                    </>
+                  ) : (
+                    <>
+                      Confirmar Pedido
+                      <ArrowRight className="w-6 h-6" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const AsistenteView = () => {
+  const [isTyping, setIsTyping] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'bot', text: '¡Hola! 👋 Soy MarIA. ¿En qué puedo ayudarte hoy?', time: '10:42 AM' },
+    { role: 'user', text: '¿Tienen Cebiche Clásico?', time: '10:43 AM' },
+    { role: 'bot', text: '¡Claro que sí! 🍋 Nuestro **Cebiche Clásico** está a **S/ 35.00**. ¿Te gustaría pedir uno?', time: '10:43 AM' },
+    { role: 'user', text: 'Sí, por favor. Uno para llevar.', time: '10:44 AM' }
+  ]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTyping(true);
+      setTimeout(() => {
+        setChatMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: '¡Excelente! 📝 He anotado tu pedido de 1 Cebiche Clásico para llevar. El total es S/ 35.00. ¿Confirmamos para enviarlo a cocina?',
+          time: '10:45 AM'
+        }]);
+        setIsTyping(false);
+      }, 2000);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="h-full flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <DemoGuide 
+      title="Asistente MarIA (WhatsApp Business IA)"
+      description="Así es como MarIA atiende a tus clientes directamente en WhatsApp. Ella responde consultas sobre productos, precios y el estado de los pedidos con un lenguaje natural y cercano, cerrando ventas 24/7."
+      steps={[
+        "El cliente escribe por WhatsApp",
+        "MarIA responde al instante con información real",
+        "El pedido se confirma y llega a tu dashboard"
+      ]}
+      color="secondary"
+    />
+    
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      {/* Mobile Phone Mockup */}
+      <div className="flex justify-center">
+        <div className="w-[360px] h-[720px] bg-black rounded-[60px] p-4 shadow-2xl border-[12px] border-[#1a1a1a] relative overflow-hidden flex flex-col">
+          {/* Phone Notch */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#1a1a1a] rounded-b-3xl z-20" />
+          
+          {/* WhatsApp UI Inside Phone */}
+          <div className="flex-1 bg-[#e5ddd5] rounded-[40px] overflow-hidden flex flex-col relative shadow-inner">
+            {/* WhatsApp Header */}
+            <div className="bg-[#075e54] pt-10 pb-4 px-6 flex items-center justify-between shadow-md relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#075e54] font-black shadow-lg overflow-hidden">
+                  <img src="https://ais-dev-bbnhhu7v5wsigapxxwldvn-128001582731.us-east1.run.app/logo.png" alt="Logo" className="w-6 h-6 object-contain" onError={(e) => { (e.target as any).src = 'https://picsum.photos/seed/maria/100/100' }} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white flex items-center gap-1">
+                    MarIA Business
+                    <CheckCircle2 className="w-3 h-3 text-blue-400 fill-white" />
+                  </div>
+                  <div className="text-[10px] text-white/80 font-medium">En línea</div>
+                </div>
+              </div>
+              <div className="flex gap-3 text-white/90">
+                <Search className="w-4 h-4" />
+                <Settings className="w-4 h-4" />
+              </div>
+            </div>
+
+            {/* Chat Background Pattern */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
+
+            {/* Chat Messages */}
+            <div className="flex-1 p-5 space-y-4 overflow-y-auto relative z-10 custom-scrollbar pb-20">
+              <div className="flex justify-center mb-4">
+                <div className="bg-[#d1ebf2] text-[#1c2e33] text-[9px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider shadow-sm">Hoy</div>
+              </div>
+
+              {chatMessages.map((msg, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                >
+                  <div className={`p-3 rounded-xl shadow-sm relative text-xs text-[#303030] ${
+                    msg.role === 'user' 
+                      ? 'bg-[#dcf8c6] rounded-tr-none' 
+                      : 'bg-white rounded-tl-none'
+                  }`}>
+                    {msg.text}
+                    <div className={`text-[8px] mt-1 flex items-center gap-1 ${msg.role === 'user' ? 'text-[#4fc3f7] justify-end' : 'text-gray-400 text-right'}`}>
+                      {msg.time}
+                      {msg.role === 'user' && (
+                        <div className="flex -space-x-1">
+                          <CheckCircle2 className="w-2 h-2 fill-current" />
+                          <CheckCircle2 className="w-2 h-2 fill-current" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
+              {isTyping && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex gap-2 max-w-[85%]"
+                >
+                  <div className="bg-white p-3 rounded-xl rounded-tl-none shadow-sm flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" />
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            {/* WhatsApp Input Area */}
+            <div className="p-3 bg-[#f0f0f0] flex gap-2 items-center relative z-10">
+              <div className="flex-1 bg-white rounded-full px-4 py-2 text-[11px] text-gray-400 shadow-sm">
+                Escribe un mensaje...
+              </div>
+              <div className="w-10 h-10 bg-[#128c7e] rounded-full flex items-center justify-center text-white shadow-lg">
+                <MessageCircle className="w-5 h-5" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Insights / Info Side */}
+      <div className="space-y-8">
+        <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="p-4 bg-secondary/10 text-secondary rounded-2xl">
+              <Sparkles className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-black text-text-main">Inteligencia que Vende</h3>
+          </div>
+          
+          <div className="space-y-8">
+            {[
+              { t: "Atención 24/7", d: "MarIA nunca duerme. Atiende pedidos a las 3 AM o en hora punta sin cansarse.", i: Clock },
+              { t: "Cierre de Ventas", d: "No solo responde, MarIA guía al cliente hasta el pago final.", i: ShoppingBag },
+              { t: "Personalidad de Marca", d: "Entrenamos a MarIA para que hable con el tono de tu negocio.", i: MessageCircle }
+            ].map((item, i) => (
+              <div key={i} className="flex gap-6 group">
+                <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center group-hover:bg-secondary/10 transition-colors shrink-0">
+                  <item.i className="w-6 h-6 text-gray-400 group-hover:text-secondary transition-colors" />
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-text-main mb-1">{item.t}</div>
+                  <div className="text-sm text-text-muted leading-relaxed">{item.d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-secondary/5 border border-secondary/10 p-8 rounded-[40px] space-y-6">
+          <h4 className="text-sm font-black text-text-main uppercase tracking-widest flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-secondary" />
+            Impacto en el Negocio
+          </h4>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between items-end">
+              <div className="text-xs font-bold text-text-muted">Conversión de Leads</div>
+              <div className="text-sm font-black text-secondary">+35%</div>
+            </div>
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: '75%' }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                className="h-full bg-secondary" 
+              />
+            </div>
+
+            <div className="flex justify-between items-end">
+              <div className="text-xs font-bold text-text-muted">Ahorro en Soporte</div>
+              <div className="text-sm font-black text-blue-500">60%</div>
+            </div>
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: '60%' }}
+                transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                className="h-full bg-blue-500" 
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+};
+
+// --- Inventario View Component ---
+
+const InventarioView = () => {
+  const [products, setProducts] = useState([
+    { id: 1, name: 'Cebiche Clásico', category: 'Entradas', stock: 5, minStock: 10, price: 35 },
+    { id: 2, name: 'Lomo Saltado', category: 'Platos de Fondo', stock: 25, minStock: 15, price: 45 },
+    { id: 3, name: 'Pisco Sour', category: 'Bebidas', stock: 8, minStock: 20, price: 25 },
+    { id: 4, name: 'Arroz con Mariscos', category: 'Platos de Fondo', stock: 18, minStock: 10, price: 42 },
+    { id: 5, name: 'Chicha Morada', category: 'Bebidas', stock: 50, minStock: 30, price: 12 },
+  ]);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [restockAmount, setRestockAmount] = useState(10);
+  
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    category: 'Entradas',
+    stock: 0,
+    minStock: 10,
+    price: 0
+  });
+
+  const handleRestock = () => {
+    if (!selectedProduct) return;
+    setProducts(products.map(p => p.id === selectedProduct.id ? { ...p, stock: p.stock + restockAmount } : p));
+    setIsRestockModalOpen(false);
+    setSelectedProduct(null);
+    setRestockAmount(10);
+  };
+
+  const handleAddProduct = () => {
+    if (!newProduct.name || newProduct.price <= 0) return;
+    const productToAdd = {
+      ...newProduct,
+      id: products.length + 1
+    };
+    setProducts([...products, productToAdd]);
+    setIsAddModalOpen(false);
+    setNewProduct({
+      name: '',
+      category: 'Entradas',
+      stock: 0,
+      minStock: 10,
+      price: 0
+    });
+  };
+
+  return (
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+      <DemoGuide 
+        title="Gestión de Inventario Inteligente"
+        description="Monitorea tu stock en tiempo real. MarIA te avisará automáticamente cuando un producto esté por agotarse para que nunca pierdas una venta."
+        steps={[
+          "Visualiza el stock de tus productos",
+          "Recibe alertas automáticas de stock bajo",
+          "Repón inventario con cantidades exactas"
+        ]}
+      />
+
+      <div className="bg-white border border-gray-100 rounded-[40px] overflow-hidden shadow-sm">
+        <div className="p-10 border-b border-gray-50 flex justify-between items-center">
+          <h3 className="text-xl font-black text-text-main">Catálogo de Productos</h3>
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-primary text-white px-8 py-3 rounded-2xl text-xs font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Añadir Producto
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-50/50">
+                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Producto</th>
+                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Categoría</th>
+                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Stock Actual</th>
+                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest">Estado</th>
+                <th className="px-10 py-6 text-[11px] font-black text-gray-400 uppercase tracking-widest text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {products.map((product) => (
+                <tr key={product.id} className="hover:bg-gray-50/30 transition-colors">
+                  <td className="px-10 py-8">
+                    <div className="text-base font-black text-text-main">{product.name}</div>
+                    <div className="text-xs font-bold text-text-muted mt-1">S/ {product.price}.00</div>
+                  </td>
+                  <td className="px-10 py-8">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">
+                      {product.category}
+                    </span>
+                  </td>
+                  <td className="px-10 py-8">
+                    <div className="flex items-center gap-3">
+                      <div className="text-base font-black text-text-main">{product.stock}</div>
+                      <div className="text-xs text-gray-400 font-bold">/ {product.minStock} min.</div>
+                    </div>
+                  </td>
+                  <td className="px-10 py-8">
+                    {product.stock <= product.minStock ? (
+                      <div className="flex items-center gap-2 text-red-500 font-black text-[10px] uppercase tracking-widest">
+                        <AlertCircle className="w-4 h-4" />
+                        Stock Crítico
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-green-500 font-black text-[10px] uppercase tracking-widest">
+                        <CheckCircle2 className="w-4 h-4" />
+                        Saludable
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-10 py-8 text-right">
+                    <button 
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setIsRestockModalOpen(true);
+                      }}
+                      className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 ml-auto"
+                    >
+                      <Plus className="w-3 h-3" />
+                      Reponer
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add Product Modal */}
+      <AnimatePresence>
+        {isAddModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-[40px] p-10 max-w-lg w-full shadow-2xl border border-gray-100"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-black text-text-main">Nuevo Producto</h3>
+                <button onClick={() => setIsAddModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                  <X className="w-6 h-6 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="space-y-6 mb-10">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nombre del Producto</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej. Arroz Chaufa"
+                    value={newProduct.name}
+                    onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" 
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Precio (S/)</label>
+                    <input 
+                      type="number" 
+                      value={newProduct.price}
+                      onChange={(e) => setNewProduct({...newProduct, price: Number(e.target.value)})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Categoría</label>
+                    <select 
+                      value={newProduct.category}
+                      onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30 appearance-none"
+                    >
+                      <option>Entradas</option>
+                      <option>Platos de Fondo</option>
+                      <option>Bebidas</option>
+                      <option>Postres</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Stock Inicial</label>
+                    <input 
+                      type="number" 
+                      value={newProduct.stock}
+                      onChange={(e) => setNewProduct({...newProduct, stock: Number(e.target.value)})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Stock Mínimo</label>
+                    <input 
+                      type="number" 
+                      value={newProduct.minStock}
+                      onChange={(e) => setNewProduct({...newProduct, minStock: Number(e.target.value)})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleAddProduct}
+                className="w-full bg-primary text-white py-5 rounded-2xl font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95"
+              >
+                Crear Producto
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Restock Modal */}
+      <AnimatePresence>
+        {isRestockModalOpen && selectedProduct && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl border border-gray-100"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-xl font-black text-text-main">Reponer Stock</h3>
+                <button onClick={() => setIsRestockModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="mb-8 text-center">
+                <div className="text-sm font-bold text-text-muted mb-2">{selectedProduct.name}</div>
+                <div className="text-xs text-gray-400">Stock actual: <span className="font-black text-text-main">{selectedProduct.stock}</span></div>
+              </div>
+
+              <div className="flex items-center justify-center gap-6 mb-10">
+                <button 
+                  onClick={() => setRestockAmount(Math.max(1, restockAmount - 1))}
+                  className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-text-main hover:bg-gray-200 transition-colors"
+                >
+                  <Minus className="w-5 h-5" />
+                </button>
+                <div className="text-4xl font-black text-primary w-16 text-center">{restockAmount}</div>
+                <button 
+                  onClick={() => setRestockAmount(restockAmount + 1)}
+                  className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-text-main hover:bg-gray-200 transition-colors"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
+
+              <button 
+                onClick={handleRestock}
+                className="w-full bg-primary text-white py-5 rounded-2xl font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95"
+              >
+                Confirmar Ingreso
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// --- Configuracion View Component ---
+
+const ConfiguracionView = () => {
+  return (
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <DemoGuide 
+        title="Configuración de tu Suite"
+        description="Personaliza la identidad de tu negocio y el comportamiento de tu Asistente IA. Aquí es donde defines cómo MarIA interactúa con tus clientes."
+        steps={[
+          "Define los datos de tu negocio",
+          "Personaliza el tono de voz de MarIA",
+          "Configura reglas de automatización"
+        ]}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Perfil del Negocio */}
+        <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="p-3 bg-primary/10 text-primary rounded-2xl">
+              <User className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-black text-text-main">Perfil del Negocio</h3>
+          </div>
+          
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nombre Comercial</label>
+              <input type="text" defaultValue="La Pescadería de Luis" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" />
+            </div>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Número de WhatsApp</label>
+              <input type="text" defaultValue="+51 975 736 687" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" />
+            </div>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Dirección</label>
+              <input type="text" defaultValue="Av. Principal 123, Miraflores, Lima" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30" />
+            </div>
+            <button className="w-full bg-primary text-white py-5 rounded-2xl font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95">
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+
+        {/* Configuración de IA */}
+        <div className="bg-white border border-gray-100 p-10 rounded-[40px] shadow-sm">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="p-3 bg-secondary/10 text-secondary rounded-2xl">
+              <MessageCircle className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-black text-text-main">Personalidad de MarIA</h3>
+          </div>
+
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tono de Voz</label>
+              <select className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30 appearance-none">
+                <option>Amigable y Cercano</option>
+                <option>Profesional y Directo</option>
+                <option>Elegante y Sofisticado</option>
+                <option>Divertido y Enérgico</option>
+              </select>
+            </div>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Objetivo Principal</label>
+              <select className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-text-main focus:outline-none focus:border-primary/30 appearance-none">
+                <option>Cerrar Ventas Rápidamente</option>
+                <option>Brindar Soporte al Cliente</option>
+                <option>Agendar Citas / Reservas</option>
+                <option>Informar sobre Productos</option>
+              </select>
+            </div>
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <div className="text-sm font-bold text-text-main">Respuestas Automáticas</div>
+                <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
+                  <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="text-sm font-bold text-text-main">Sugerencias de Cross-selling</div>
+                <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
+                  <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
+                </div>
+              </div>
+            </div>
+            <div className="p-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+              <p className="text-xs text-text-muted leading-relaxed italic">
+                "MarIA está configurada para saludar cordialmente, ofrecer el menú del día y sugerir bebidas complementarias basándose en el pedido del cliente."
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const AsistenteView = () => (
-  <div className="h-full flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <DemoGuide 
-      title="Asistente MarIA (Inteligencia Artificial)"
-      description="MarIA atiende a tus clientes por WhatsApp 24/7. Ella responde consultas sobre productos, precios y el estado de los pedidos. Si un cliente quiere comprar, MarIA toma el pedido y lo envía directamente a tu dashboard."
-      steps={[
-        "Resuelve dudas sobre ingredientes o precios",
-        "Toma los datos del cliente y confirma el pedido",
-        "Informa al cliente sobre el estado de su delivery"
-      ]}
-      color="secondary"
-    />
-    
-    <div className="flex-1 bg-white border border-gray-100 rounded-[40px] overflow-hidden flex flex-col relative shadow-sm">
-      {/* Chat Header */}
-      <div className="bg-gray-50/50 border-b border-gray-100 p-8 flex items-center justify-between">
-        <div className="flex items-center gap-5">
-          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-primary/20 text-xl">M</div>
-          <div>
-            <div className="text-lg font-black text-text-main">MarIA AI Assistant</div>
-            <div className="text-[11px] text-green-500 font-bold flex items-center gap-2">
-              <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
-              Atendiendo en tiempo real
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-3">
-          <button className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary/10 hover:text-primary transition-all"><Settings className="w-6 h-6" /></button>
-        </div>
-      </div>
-
-      {/* Chat Messages */}
-      <div className="flex-1 p-10 space-y-8 overflow-y-auto bg-[#fafafa] custom-scrollbar">
-        <div className="flex gap-5 max-w-[85%]">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-sm font-black text-primary shrink-0">M</div>
-          <div className="bg-white border border-gray-100 p-6 rounded-[32px] rounded-tl-none text-base text-text-muted shadow-sm leading-relaxed">
-            ¡Hola! 👋 Soy MarIA, tu asistente virtual. ¿En qué puedo ayudarte hoy? Puedo mostrarte nuestra carta, tomar tu pedido o decirte cómo va tu orden.
-          </div>
-        </div>
-        
-        <div className="flex gap-5 max-w-[85%] ml-auto flex-row-reverse">
-          <div className="w-12 h-12 rounded-2xl bg-gray-200 flex items-center justify-center text-sm font-black text-gray-500 shrink-0">U</div>
-          <div className="bg-primary p-6 rounded-[32px] rounded-tr-none text-base text-white shadow-2xl shadow-primary/20 font-medium">
-            ¿Tienen Cebiche Clásico? ¿A cuánto está?
-          </div>
-        </div>
-
-        <div className="flex gap-5 max-w-[85%]">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-sm font-black text-primary shrink-0">M</div>
-          <div className="bg-white border border-gray-100 p-6 rounded-[32px] rounded-tl-none text-base text-text-muted shadow-sm leading-relaxed">
-            ¡Claro que sí! 🍋 Nuestro **Cebiche Clásico** es el favorito de la casa. Está preparado con pesca del día, limón de Chulucanas y ají limo. <br/><br/>
-            Su precio es de **S/ 35.00**. ¿Te gustaría que lo añada a tu pedido ahora mismo?
-          </div>
-        </div>
-      </div>
-
-      {/* Chat Input */}
-      <div className="p-8 bg-white border-t border-gray-100 flex gap-5">
-        <input 
-          type="text" 
-          placeholder="Escribe un mensaje a MarIA..." 
-          className="flex-1 bg-gray-50 border border-gray-100 rounded-3xl px-8 py-5 text-base text-text-main focus:outline-none focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all"
-        />
-        <button className="bg-primary hover:bg-primary-dark text-white p-5 rounded-3xl transition-all shadow-xl shadow-primary/20 active:scale-95">
-          <MessageCircle className="w-7 h-7" />
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
 // --- Main Demo Suite Component ---
 
 export default function DemoSuite() {
-  const [activeTab, setActiveTab] = useState('gestion'); // 'tienda', 'gestion', 'asistente'
+  const [activeRole, setActiveRole] = useState<'cliente' | 'emprendedor'>('emprendedor');
+  const [activeTab, setActiveTab] = useState('gestion');
+
+  // Handle role change and set default tab for each role
+  const handleRoleChange = (role: 'cliente' | 'emprendedor') => {
+    setActiveRole(role);
+    setActiveTab(role === 'cliente' ? 'tienda' : 'gestion');
+  };
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-text-main flex overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside className="w-80 bg-white border-r border-gray-100 flex flex-col p-10 shrink-0 shadow-sm">
-        <div className="flex items-center gap-4 mb-16">
+      <aside className="w-80 bg-white border-r border-gray-100 flex flex-col p-10 shrink-0 shadow-sm relative z-50">
+        <div className="flex items-center gap-4 mb-12">
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/20">
             <LayoutDashboard className="w-8 h-8 text-white" />
           </div>
           <div>
             <span className="font-display text-3xl font-black tracking-tighter block leading-none">Mar<em className="text-primary not-italic">IA</em></span>
-            <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.25em]">Suite Emprendedor</span>
+            <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.25em]">Demo Suite</span>
+          </div>
+        </div>
+
+        {/* Role Switcher */}
+        <div className="bg-gray-50 p-1.5 rounded-2xl flex gap-1 mb-12 border border-gray-100">
+          <button 
+            onClick={() => handleRoleChange('cliente')}
+            className={`flex-1 py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${activeRole === 'cliente' ? 'bg-white text-primary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-text-main'}`}
+          >
+            <User className="w-4 h-4" />
+            Cliente
+          </button>
+          <button 
+            onClick={() => handleRoleChange('emprendedor')}
+            className={`flex-1 py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${activeRole === 'emprendedor' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-text-main'}`}
+          >
+            <Briefcase className="w-4 h-4" />
+            Dueño
+          </button>
+        </div>
+
+        {/* Profile Card */}
+        <div className="mb-12 p-6 bg-gradient-to-br from-gray-50 to-white rounded-[32px] border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-4 mb-4">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${activeRole === 'cliente' ? 'bg-primary' : 'bg-secondary'}`}>
+              {activeRole === 'cliente' ? 'JD' : 'LG'}
+            </div>
+            <div>
+              <div className="text-sm font-black text-text-main leading-none mb-1">
+                {activeRole === 'cliente' ? 'Juan Demo' : 'Luis Garcia'}
+              </div>
+              <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+                {activeRole === 'cliente' ? 'Cliente Potencial' : 'Dueño de Negocio'}
+              </div>
+            </div>
+          </div>
+          <div className="text-[10px] text-text-muted leading-relaxed font-medium">
+            {activeRole === 'cliente' 
+              ? 'Explora la tienda y haz pedidos como lo harían tus clientes reales.' 
+              : 'Gestiona ventas, inventario y configura tu IA desde el panel administrativo.'}
           </div>
         </div>
 
         <nav className="flex-1 space-y-4">
-          <div className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-8 ml-2">Panel de Control</div>
-          <SidebarItem 
-            icon={ShoppingBag} 
-            label="Tienda Virtual" 
-            active={activeTab === 'tienda'} 
-            onClick={() => setActiveTab('tienda')} 
-          />
-          <SidebarItem 
-            icon={BarChart3} 
-            label="Gestión de Ventas" 
-            active={activeTab === 'gestion'} 
-            onClick={() => setActiveTab('gestion')} 
-          />
-          <SidebarItem 
-            icon={MessageCircle} 
-            label="Asistente IA" 
-            active={activeTab === 'asistente'} 
-            onClick={() => setActiveTab('asistente')} 
-          />
+          <div className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-8 ml-2">
+            {activeRole === 'cliente' ? 'Experiencia Cliente' : 'Panel Administrativo'}
+          </div>
           
-          <div className="pt-12 text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-8 ml-2">Negocio</div>
-          <SidebarItem icon={Package} label="Inventario" active={false} onClick={() => {}} />
-          <SidebarItem icon={Settings} label="Configuración" active={false} onClick={() => {}} />
+          {activeRole === 'cliente' ? (
+            <>
+              <SidebarItem 
+                icon={ShoppingBag} 
+                label="Tienda Virtual" 
+                active={activeTab === 'tienda'} 
+                onClick={() => setActiveTab('tienda')} 
+              />
+              <SidebarItem 
+                icon={MessageCircle} 
+                label="Asistente IA" 
+                active={activeTab === 'asistente'} 
+                onClick={() => setActiveTab('asistente')} 
+              />
+            </>
+          ) : (
+            <>
+              <SidebarItem 
+                icon={BarChart3} 
+                label="Gestión de Ventas" 
+                active={activeTab === 'gestion'} 
+                onClick={() => setActiveTab('gestion')} 
+              />
+              <SidebarItem 
+                icon={Package} 
+                label="Inventario" 
+                active={activeTab === 'inventario'} 
+                onClick={() => setActiveTab('inventario')} 
+              />
+              <SidebarItem 
+                icon={Settings} 
+                label="Configuración" 
+                active={activeTab === 'configuracion'} 
+                onClick={() => setActiveTab('configuracion')} 
+              />
+            </>
+          )}
         </nav>
 
         <div className="mt-auto pt-10 border-t border-gray-100">
@@ -279,10 +1103,14 @@ export default function DemoSuite() {
             <div className="h-12 w-px bg-gray-100" />
             <div className="flex items-center gap-5">
               <div className="text-right hidden sm:block">
-                <div className="text-base font-black text-text-main leading-none mb-1">Luis Garcia</div>
-                <div className="text-[11px] font-bold text-primary uppercase tracking-[0.2em]">Administrador Pro</div>
+                <div className="text-base font-black text-text-main leading-none mb-1">
+                  {activeRole === 'cliente' ? 'Juan Demo' : 'Luis Garcia'}
+                </div>
+                <div className={`text-[11px] font-bold uppercase tracking-[0.2em] ${activeRole === 'cliente' ? 'text-primary' : 'text-secondary'}`}>
+                  {activeRole === 'cliente' ? 'Cliente Activo' : 'Administrador Pro'}
+                </div>
               </div>
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-black border-4 border-white shadow-xl">
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black border-4 border-white shadow-xl bg-gradient-to-br ${activeRole === 'cliente' ? 'from-primary to-primary-dark' : 'from-secondary to-secondary-dark'}`}>
                 <User className="w-7 h-7" />
               </div>
             </div>
@@ -303,6 +1131,8 @@ export default function DemoSuite() {
               {activeTab === 'tienda' && <TiendaView />}
               {activeTab === 'gestion' && <Dashboard />}
               {activeTab === 'asistente' && <AsistenteView />}
+              {activeTab === 'inventario' && <InventarioView />}
+              {activeTab === 'configuracion' && <ConfiguracionView />}
             </motion.div>
           </AnimatePresence>
         </div>
