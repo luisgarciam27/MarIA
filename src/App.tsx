@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, ShoppingBag, BarChart3, ArrowRight, ChevronDown, CheckCircle2 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
+import DemoSuite from './components/DemoSuite';
 import { supabase } from './lib/supabase';
 
 const Logo = () => (
@@ -775,14 +776,7 @@ export default function App() {
         
         <Routes>
           <Route path="/" element={<LandingPage onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />} />
-          <Route path="/demo" element={
-            <div className="min-h-screen bg-bg-main">
-              <div className="container mx-auto py-6">
-                <Link to="/" className="text-primary font-bold hover:underline mb-6 inline-block">← Volver al inicio</Link>
-                <Dashboard />
-              </div>
-            </div>
-          } />
+          <Route path="/demo" element={<DemoSuite />} />
         </Routes>
       </div>
     </BrowserRouter>
