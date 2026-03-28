@@ -21,7 +21,8 @@ import {
   Plus,
   Minus,
   X,
-  Menu
+  Menu,
+  Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -73,14 +74,18 @@ const TiendaView = () => {
   const [cart, setCart] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
 
   const products = [
+    // --- COMIDA ---
     { 
       id: 1, 
       name: "Cebiche Clásico", 
       price: 35, 
       image: "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=800&auto=format&fit=crop", 
-      category: "Entradas",
+      category: "Comida",
       description: "Pescado fresco del día marinado en limón de pica, acompañado de camote glaseado, choclo desgranado y canchita serrana."
     },
     { 
@@ -88,55 +93,218 @@ const TiendaView = () => {
       name: "Lomo Saltado", 
       price: 42, 
       image: "https://images.unsplash.com/photo-1594179047519-f347310d3322?w=800&auto=format&fit=crop", 
-      category: "Fondos",
+      category: "Comida",
       description: "Trozos de lomo fino salteados al wok con cebolla roja, tomate, ají amarillo y un toque de cilantro. Servido con papas fritas y arroz blanco."
     },
     { 
       id: 3, 
-      name: "Arroz con Mariscos", 
+      name: "Pizza Artesanal", 
       price: 38, 
-      image: "https://images.unsplash.com/photo-1512058560366-cd2427ff56f3?w=800&auto=format&fit=crop", 
-      category: "Fondos",
-      description: "Arroz meloso con mixtura de mariscos frescos, base de ají panca y un toque de vino blanco. Coronado con salsa criolla."
+      image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop", 
+      category: "Comida",
+      description: "Masa madre, salsa de tomate italiana, mozzarella fresca, albahaca y aceite de oliva extra virgen."
     },
     { 
       id: 4, 
-      name: "Chicha Morada 1L", 
-      price: 15, 
-      image: "https://images.unsplash.com/photo-1544145945-f904253d0c7b?w=800&auto=format&fit=crop", 
-      category: "Bebidas",
-      description: "Bebida tradicional peruana a base de maíz morado, piña, manzana y canela. 100% natural."
+      name: "Hamburguesa Gourmet", 
+      price: 28, 
+      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&auto=format&fit=crop", 
+      category: "Comida",
+      description: "200g de carne Angus, queso cheddar fundido, tocino crocante, cebolla caramelizada y salsa secreta en pan brioche."
     },
+
+    // --- TECNOLOGÍA ---
     { 
       id: 5, 
-      name: "Pisco Sour", 
-      price: 25, 
-      image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800&auto=format&fit=crop", 
-      category: "Bebidas",
-      description: "Cóctel bandera del Perú. Pisco quebranta, jarabe de goma, limón, clara de huevo y amargo de angostura."
+      name: "Audífonos Wireless Pro", 
+      price: 599, 
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop", 
+      category: "Tecnología",
+      description: "Cancelación activa de ruido, 40 horas de batería y sonido de alta fidelidad. Diseño ergonómico premium."
     },
     { 
       id: 6, 
-      name: "Suspiro a la Limeña", 
-      price: 18, 
-      image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop", 
-      category: "Postres",
-      description: "Dulce de leche suave y cremoso coronado con merengue al oporto y una pizca de canela."
+      name: "Smartwatch Series X", 
+      price: 850, 
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop", 
+      category: "Tecnología",
+      description: "Monitor de salud avanzado, GPS integrado, resistencia al agua 50m y pantalla Always-On Retina."
+    },
+    { 
+      id: 7, 
+      name: "Teclado Mecánico RGB", 
+      price: 320, 
+      image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=800&auto=format&fit=crop", 
+      category: "Tecnología",
+      description: "Switches mecánicos ultra rápidos, retroiluminación RGB personalizable y estructura de aluminio aeroespacial."
+    },
+    { 
+      id: 8, 
+      name: "Cámara Mirrorless 4K", 
+      price: 2450, 
+      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&auto=format&fit=crop", 
+      category: "Tecnología",
+      description: "Sensor Full Frame, grabación 4K a 60fps, enfoque automático por ojo y estabilización de imagen de 5 ejes."
+    },
+
+    // --- HOGAR ---
+    { 
+      id: 9, 
+      name: "Lámpara Nórdica", 
+      price: 145, 
+      image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&auto=format&fit=crop", 
+      category: "Hogar",
+      description: "Diseño minimalista en madera y metal. Luz cálida regulable, ideal para salas de estar o dormitorios."
+    },
+    { 
+      id: 10, 
+      name: "Set de Cerámica", 
+      price: 180, 
+      image: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800&auto=format&fit=crop", 
+      category: "Hogar",
+      description: "Juego de 4 tazas y 4 platos hechos a mano. Acabado mate elegante y resistente al microondas."
+    },
+    { 
+      id: 11, 
+      name: "Difusor Ultrasónico", 
+      price: 95, 
+      image: "https://images.unsplash.com/photo-1602928321679-560bb453f190?w=800&auto=format&fit=crop", 
+      category: "Hogar",
+      description: "Humidificador y difusor de aceites esenciales con luces LED de colores. Silencioso y con apagado automático."
+    },
+    { 
+      id: 12, 
+      name: "Manta de Algodón", 
+      price: 120, 
+      image: "https://images.unsplash.com/photo-1580302200322-22081c16b457?w=800&auto=format&fit=crop", 
+      category: "Hogar",
+      description: "Tejido suave 100% algodón orgánico. Perfecta para el sofá, disponible en tonos tierra."
+    },
+
+    // --- MASCOTAS ---
+    { 
+      id: 13, 
+      name: "Cama Ortopédica", 
+      price: 165, 
+      image: "https://images.unsplash.com/photo-1591584539485-1524b31774fd?w=800&auto=format&fit=crop", 
+      category: "Mascotas",
+      description: "Espuma viscoelástica para el soporte de articulaciones. Funda lavable y base antideslizante."
+    },
+    { 
+      id: 14, 
+      name: "Rascador Multinivel", 
+      price: 210, 
+      image: "https://images.unsplash.com/photo-1545249390-6bdfa286032f?w=800&auto=format&fit=crop", 
+      category: "Mascotas",
+      description: "Torre para gatos con postes de sisal, hamaca y juguetes colgantes. Estructura estable y robusta."
+    },
+    { 
+      id: 15, 
+      name: "Dispensador Inteligente", 
+      price: 340, 
+      image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop", 
+      category: "Mascotas",
+      description: "Programación de comidas desde el celular, cámara HD integrada y grabación de voz para llamar a tu mascota."
+    },
+    { 
+      id: 16, 
+      name: "Set de Juguetes", 
+      price: 45, 
+      image: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=800&auto=format&fit=crop", 
+      category: "Mascotas",
+      description: "Pack de 5 juguetes variados (cuerda, pelota, peluche con sonido). Materiales seguros y duraderos."
+    },
+
+    // --- ROPA ---
+    { 
+      id: 17, 
+      name: "Polera Oversize", 
+      price: 85, 
+      image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&auto=format&fit=crop", 
+      category: "Ropa",
+      description: "Algodón pesado de alta calidad. Corte moderno y cómodo.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["S", "M", "L", "XL"],
+      colors: ["Negro", "Blanco", "Gris", "Azul"]
+    },
+    { 
+      id: 18, 
+      name: "Jeans Slim Fit", 
+      price: 120, 
+      image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&auto=format&fit=crop", 
+      category: "Ropa",
+      description: "Denim elástico premium. Ajuste perfecto y durabilidad garantizada.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["28", "30", "32", "34", "36"],
+      colors: ["Azul Oscuro", "Celeste", "Negro"]
+    },
+    { 
+      id: 19, 
+      name: "Casaca Cortaviento", 
+      price: 150, 
+      image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&auto=format&fit=crop", 
+      category: "Ropa",
+      description: "Material impermeable y ligero. Ideal para actividades al aire libre.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["S", "M", "L"],
+      colors: ["Verde", "Negro", "Rojo"]
+    },
+    { 
+      id: 20, 
+      name: "Vestido de Verano", 
+      price: 95, 
+      image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&auto=format&fit=crop", 
+      category: "Ropa",
+      description: "Tela fresca y ligera con estampado floral. Diseño femenino y elegante.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["XS", "S", "M", "L"],
+      colors: ["Rosa", "Azul", "Blanco"]
+    },
+
+    // --- ZAPATILLAS ---
+    { 
+      id: 21, 
+      name: "Adidas Samba OG", 
+      price: 450, 
+      image: "https://images.unsplash.com/photo-1626379616459-b2ce1d9decbb?w=800&auto=format&fit=crop", 
+      category: "Zapatillas",
+      description: "Un ícono del fútbol sala convertido en leyenda urbana. Cuero premium y suela de caucho color caramelo.",
+      hasSizes: true,
+      hasColors: true,
+      sizes: ["38", "39", "40", "41", "42", "43"],
+      colors: ["Blanco/Negro", "Negro/Blanco", "Verde/Blanco"]
     },
   ];
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: any, quantity: number, size?: string, color?: string) => {
     setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
+      const cartItemId = `${product.id}-${size || ''}-${color || ''}`;
+      const existing = prev.find(item => item.cartItemId === cartItemId);
+      
       if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, cantidad: item.cantidad + 1 } : item);
+        return prev.map(item => 
+          item.cartItemId === cartItemId 
+            ? { ...item, cantidad: item.cantidad + quantity } 
+            : item
+        );
       }
-      return [...prev, { ...product, cantidad: 1 }];
+      
+      return [...prev, { 
+        ...product, 
+        cartItemId,
+        cantidad: quantity,
+        selectedSize: size,
+        selectedColor: color
+      }];
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCart(prev => prev.filter(item => item.id !== id));
+  const removeFromCart = (cartItemId: string) => {
+    setCart(prev => prev.filter(item => item.cartItemId !== cartItemId));
   };
 
   const totalCart = cart.reduce((acc, item) => acc + (item.price * item.cantidad), 0);
@@ -149,7 +317,14 @@ const TiendaView = () => {
     if (cart.length === 0 || isCheckingOut) return;
 
     setIsCheckingOut(true);
-    const itemsSummary = cart.map(item => `${item.cantidad}x ${item.name} (S/ ${item.price}.00)` ).join('\n');
+    const itemsSummary = cart.map(item => {
+      let details = `${item.cantidad}x ${item.name}`;
+      if (item.selectedSize) details += ` (Talla: ${item.selectedSize})`;
+      if (item.selectedColor) details += ` (Color: ${item.selectedColor})`;
+      details += ` - S/ ${item.price * item.cantidad}.00`;
+      return details;
+    }).join('\n');
+
     const waMessage = encodeURIComponent(
       `¡Hola! 👋 Quisiera realizar un pedido:\n\n${itemsSummary}\n\n*Total: S/ ${totalCart}.00*\n\nGracias.`
     );
@@ -160,7 +335,13 @@ const TiendaView = () => {
         {
           cliente_nombre: 'Cliente Demo',
           telefono: 'Demo-999',
-          items: JSON.stringify(cart.map(item => ({ nombre: item.name, cantidad: item.cantidad, precio: `S/ ${item.price}.00` }))),
+          items: JSON.stringify(cart.map(item => ({ 
+            nombre: item.name, 
+            cantidad: item.cantidad, 
+            precio: `S/ ${item.price}.00`,
+            talla: item.selectedSize,
+            color: item.selectedColor
+          }))),
           total: totalCart,
           estado: 'pendiente',
           origen: 'web'
@@ -273,7 +454,12 @@ const TiendaView = () => {
               className="relative bg-white w-full max-w-4xl rounded-[32px] lg:rounded-[48px] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] overflow-y-auto md:overflow-visible"
             >
               <button 
-                onClick={() => setSelectedProduct(null)}
+                onClick={() => {
+                  setSelectedProduct(null);
+                  setSelectedQuantity(1);
+                  setSelectedSize('');
+                  setSelectedColor('');
+                }}
                 className="absolute top-4 right-4 lg:top-6 lg:right-6 z-10 p-2 lg:p-3 bg-white/80 backdrop-blur-md rounded-2xl hover:bg-white transition-colors shadow-lg"
               >
                 <X className="w-5 h-5 lg:w-6 lg:h-6 text-text-main" />
@@ -287,19 +473,85 @@ const TiendaView = () => {
               <div className="md:w-1/2 p-6 lg:p-14 flex flex-col">
                 <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em] mb-3 lg:mb-4">{selectedProduct.category}</div>
                 <h3 className="text-2xl lg:text-4xl font-black text-text-main mb-4 lg:mb-6 leading-tight">{selectedProduct.name}</h3>
-                <p className="text-sm lg:text-lg text-text-muted leading-relaxed mb-8 lg:mb-10 font-medium">
+                <p className="text-sm lg:text-lg text-text-muted leading-relaxed mb-6 lg:mb-8 font-medium">
                   {selectedProduct.description}
                 </p>
-                
-                <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 lg:gap-8">
+
+                {/* Selection Options */}
+                <div className="space-y-6 mb-8">
+                  {/* Quantity Selector */}
                   <div>
-                    <div className="text-[10px] lg:text-xs font-bold text-text-light uppercase tracking-widest mb-1">Precio Unitario</div>
-                    <div className="text-2xl lg:text-3xl font-black text-primary">S/ {selectedProduct.price}.00</div>
+                    <div className="text-[10px] font-bold text-text-light uppercase tracking-widest mb-3">Cantidad</div>
+                    <div className="flex items-center gap-4">
+                      <button 
+                        onClick={() => setSelectedQuantity(q => Math.max(1, q - 1))}
+                        className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                      >
+                        <Minus className="w-4 h-4 text-text-main" />
+                      </button>
+                      <span className="text-lg font-black w-8 text-center">{selectedQuantity}</span>
+                      <button 
+                        onClick={() => setSelectedQuantity(q => q + 1)}
+                        className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                      >
+                        <Plus className="w-4 h-4 text-text-main" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Size Selector */}
+                  {selectedProduct.hasSizes && (
+                    <div>
+                      <div className="text-[10px] font-bold text-text-light uppercase tracking-widest mb-3">Talla</div>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProduct.sizes.map((size: string) => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${selectedSize === size ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-gray-50 text-text-muted hover:bg-gray-100'}`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Color Selector */}
+                  {selectedProduct.hasColors && (
+                    <div>
+                      <div className="text-[10px] font-bold text-text-light uppercase tracking-widest mb-3">Color</div>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProduct.colors.map((color: string) => (
+                          <button
+                            key={color}
+                            onClick={() => setSelectedColor(color)}
+                            className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${selectedColor === color ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-gray-50 text-text-muted hover:bg-gray-100'}`}
+                          >
+                            {color}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 lg:gap-8 border-t border-gray-50 pt-8">
+                  <div>
+                    <div className="text-[10px] lg:text-xs font-bold text-text-light uppercase tracking-widest mb-1">Total Parcial</div>
+                    <div className="text-2xl lg:text-3xl font-black text-primary">S/ {selectedProduct.price * selectedQuantity}.00</div>
                   </div>
                   <button 
                     onClick={() => {
-                      addToCart(selectedProduct);
+                      if ((selectedProduct.hasSizes && !selectedSize) || (selectedProduct.hasColors && !selectedColor)) {
+                        alert('Por favor selecciona talla y color');
+                        return;
+                      }
+                      addToCart(selectedProduct, selectedQuantity, selectedSize, selectedColor);
                       setSelectedProduct(null);
+                      setSelectedQuantity(1);
+                      setSelectedSize('');
+                      setSelectedColor('');
                       setIsCartOpen(true);
                     }}
                     className="w-full sm:w-auto flex-1 bg-primary hover:bg-primary-dark text-white py-5 lg:py-6 rounded-2xl lg:rounded-3xl font-black text-base lg:text-lg transition-all flex items-center justify-center gap-3 lg:gap-4 shadow-2xl shadow-primary/30 hover:-translate-y-1 active:scale-95"
@@ -349,14 +601,22 @@ const TiendaView = () => {
                   </div>
                 ) : (
                   cart.map((item) => (
-                    <div key={item.id} className="flex gap-5 bg-gray-50 p-5 rounded-3xl border border-gray-100 group">
+                    <div key={item.cartItemId} className="flex gap-5 bg-gray-50 p-5 rounded-3xl border border-gray-100 group relative">
                       <img src={item.image} alt={item.name} className="w-20 h-20 rounded-2xl object-cover" />
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-1">
                           <h4 className="font-bold text-text-main">{item.name}</h4>
-                          <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-600 transition-colors">
-                            <Package className="w-4 h-4" />
+                          <button onClick={() => removeFromCart(item.cartItemId)} className="text-red-400 hover:text-red-600 transition-colors">
+                            <X className="w-4 h-4" />
                           </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {item.selectedSize && (
+                            <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-gray-100 text-primary uppercase tracking-tighter">Talla: {item.selectedSize}</span>
+                          )}
+                          {item.selectedColor && (
+                            <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-gray-100 text-secondary uppercase tracking-tighter">Color: {item.selectedColor}</span>
+                          )}
                         </div>
                         <div className="text-xs text-text-muted mb-3">S/ {item.price}.00 x {item.cantidad}</div>
                         <div className="font-black text-primary">S/ {item.price * item.cantidad}.00</div>
@@ -973,6 +1233,7 @@ export default function DemoSuite() {
   const [activeRole, setActiveRole] = useState<'cliente' | 'emprendedor'>('emprendedor');
   const [activeTab, setActiveTab] = useState('gestion');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showRoleAnnouncement, setShowRoleAnnouncement] = useState(true);
 
   // Handle role change and set default tab for each role
   const handleRoleChange = (role: 'cliente' | 'emprendedor') => {
@@ -983,6 +1244,71 @@ export default function DemoSuite() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-text-main flex overflow-hidden font-sans relative">
+      {/* Role Announcement Modal */}
+      <AnimatePresence>
+        {showRoleAnnouncement && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowRoleAnnouncement(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white w-full max-w-md rounded-[40px] p-10 lg:p-12 shadow-2xl text-center overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary" />
+              
+              <div className="w-20 h-20 bg-gray-50 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                <Users className="w-10 h-10 text-primary" />
+              </div>
+
+              <h2 className="text-3xl font-black text-text-main mb-4 leading-tight">¡Bienvenido a MarIA!</h2>
+              <p className="text-text-muted text-lg mb-10 font-medium leading-relaxed">
+                Esta Demo Suite tiene <span className="text-primary font-black">dos modos</span> para que explores todo el potencial:
+              </p>
+
+              <div className="grid gap-4 mb-10 text-left">
+                <div className="p-5 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4">
+                  <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-black text-primary text-sm uppercase tracking-wider mb-1">Modo Cliente</div>
+                    <p className="text-xs text-text-muted font-medium">Interactúa con la IA, mira el catálogo y haz pedidos reales.</p>
+                  </div>
+                </div>
+
+                <div className="p-5 bg-secondary/5 rounded-3xl border border-secondary/10 flex items-start gap-4">
+                  <div className="w-10 h-10 bg-secondary rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-secondary/20">
+                    <Briefcase className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-black text-secondary text-sm uppercase tracking-wider mb-1">Modo Dueño</div>
+                    <p className="text-xs text-text-muted font-medium">Gestiona ventas, inventario y configura la personalidad de tu IA.</p>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setShowRoleAnnouncement(false)}
+                className="w-full bg-text-main text-white py-5 rounded-[24px] font-black text-lg shadow-xl hover:scale-[1.02] transition-all active:scale-95"
+              >
+                ¡Entendido!
+              </button>
+              
+              <p className="mt-6 text-[11px] font-bold text-text-light uppercase tracking-widest">
+                Cambia de modo en cualquier momento desde la barra lateral
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Mobile Overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
