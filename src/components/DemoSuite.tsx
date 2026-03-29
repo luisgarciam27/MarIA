@@ -35,7 +35,8 @@ import {
   TrendingUp as TrendingUpIcon,
   Phone as PhoneIcon,
   CheckCircle2 as CheckCircleIcon,
-  Archive as ArchiveIcon
+  Archive as ArchiveIcon,
+  Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -1466,8 +1467,8 @@ const ConfiguracionView = () => {
 // --- Main Demo Suite Component ---
 
 export default function DemoSuite() {
-  const [activeRole, setActiveRole] = useState<'cliente' | 'emprendedor'>('emprendedor');
-  const [activeTab, setActiveTab] = useState('gestion');
+  const [activeRole, setActiveRole] = useState<'cliente' | 'emprendedor'>('cliente');
+  const [activeTab, setActiveTab] = useState('tienda');
   const [crmProspectos, setCrmProspectos] = useState([
     { id: '1', telefono: '+51 987 654 321', interes_web: 'ERP para Constructora', ultimo_mensaje_ia: 'El cliente necesita gestionar 5 obras en simultáneo.', estado: 'Nuevo', puntuacion_calidad: 95 },
     { id: '2', telefono: '+51 912 345 678', interes_web: 'E-commerce de Ropa', ultimo_mensaje_ia: 'Busca integración con pasarelas de pago peruanas.', estado: 'Calificado', puntuacion_calidad: 78 },
@@ -1478,6 +1479,9 @@ export default function DemoSuite() {
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'payment'>('cart');
   const [selectedPayment, setSelectedPayment] = useState<'yape' | 'plin' | 'bcp' | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -1487,13 +1491,96 @@ export default function DemoSuite() {
 
   // Handle role change and set default tab for each role
   const handleRoleChange = (role: 'cliente' | 'emprendedor') => {
+    if (role === 'emprendedor' && activeRole !== 'emprendedor') {
+      setShowPasswordModal(true);
+      return;
+    }
     setActiveRole(role);
     setActiveTab(role === 'cliente' ? 'tienda' : 'gestion');
     setIsSidebarOpen(false);
   };
 
+  const verifyPassword = () => {
+    if (passwordInput === 'Admin2702') {
+      setActiveRole('emprendedor');
+      setActiveTab('gestion');
+      setShowPasswordModal(false);
+      setPasswordInput('');
+      setPasswordError(false);
+      setIsSidebarOpen(false);
+    } else {
+      setPasswordError(true);
+      setTimeout(() => setPasswordError(false), 2000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-text-main flex overflow-hidden font-sans relative">
+      {/* Password Modal */}
+      <AnimatePresence>
+        {showPasswordModal && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowPasswordModal(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-md rounded-[40px] p-10 relative z-10 shadow-2xl border border-gray-100"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-20 h-20 bg-secondary/10 rounded-3xl flex items-center justify-center mb-6">
+                  <Lock className="w-10 h-10 text-secondary" />
+                </div>
+                <h2 className="text-2xl font-black text-text-main mb-2 tracking-tighter">Acceso Restringido</h2>
+                <p className="text-sm text-text-muted font-medium mb-8">Ingresa la clave maestra para acceder al Panel Administrativo.</p>
+                
+                <div className="w-full space-y-4">
+                  <div className="relative">
+                    <input 
+                      type="password"
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && verifyPassword()}
+                      placeholder="••••••••"
+                      className={`w-full px-6 py-4 bg-gray-50 border-2 rounded-2xl text-center text-xl font-black tracking-[0.5em] outline-none transition-all ${passwordError ? 'border-red-500 animate-shake' : 'border-gray-100 focus:border-secondary focus:bg-white'}`}
+                      autoFocus
+                    />
+                    {passwordError && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2"
+                      >
+                        Clave incorrecta
+                      </motion.div>
+                    )}
+                  </div>
+                  
+                  <button 
+                    onClick={verifyPassword}
+                    className="w-full py-4 bg-secondary text-white rounded-2xl font-black text-sm shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    Verificar Clave
+                  </button>
+                  <button 
+                    onClick={() => setShowPasswordModal(false)}
+                    className="w-full py-4 text-gray-400 font-black text-xs uppercase tracking-widest hover:text-text-main transition-all"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Role Announcement Modal */}
       <AnimatePresence>
         {showRoleAnnouncement && (

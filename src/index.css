@@ -42,11 +42,17 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.2; }
   }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
 
   --animate-float: float 6s ease-in-out infinite;
   --animate-marquee: marquee 20s linear infinite;
   --animate-drift: drift 10s ease-in-out infinite;
   --animate-blink: blink 1.4s infinite;
+  --animate-shake: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 @layer base {
