@@ -1,0 +1,21 @@
+{
+  "name": "MarIA CRM Pro",
+  "short_name": "MarIA CRM",
+  "description": "Panel de Gestión de Prospectos de Alta Conversión",
+  "start_url": "/crm",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/crm/192/192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://picsum.photos/seed/crm/512/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
