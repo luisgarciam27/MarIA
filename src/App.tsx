@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, ShoppingBag, BarChart3, ArrowRight, ChevronDown, CheckCircle2, Sparkles } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DemoSuite from './components/DemoSuite';
+import RealCRM from './components/RealCRM';
 import { supabase } from './lib/supabase';
 
 const Logo = () => (
@@ -800,6 +801,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage onOpenWhatsApp={() => setIsWhatsAppModalOpen(true)} />} />
           <Route path="/demo" element={<DemoSuite />} />
+          <Route path="/crm" element={<RealCRM />} />
         </Routes>
       </div>
     </BrowserRouter>
