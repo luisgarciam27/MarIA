@@ -29,7 +29,13 @@ import {
   Zap,
   MessageSquare,
   Workflow,
-  Brain
+  Brain,
+  LayoutList,
+  ExternalLink,
+  TrendingUp as TrendingUpIcon,
+  Phone as PhoneIcon,
+  CheckCircle2 as CheckCircleIcon,
+  Archive as ArchiveIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -1462,6 +1468,11 @@ const ConfiguracionView = () => {
 export default function DemoSuite() {
   const [activeRole, setActiveRole] = useState<'cliente' | 'emprendedor'>('emprendedor');
   const [activeTab, setActiveTab] = useState('gestion');
+  const [crmProspectos, setCrmProspectos] = useState([
+    { id: '1', telefono: '+51 987 654 321', interes_web: 'ERP para Constructora', ultimo_mensaje_ia: 'El cliente necesita gestionar 5 obras en simultáneo.', estado: 'Nuevo', puntuacion_calidad: 95 },
+    { id: '2', telefono: '+51 912 345 678', interes_web: 'E-commerce de Ropa', ultimo_mensaje_ia: 'Busca integración con pasarelas de pago peruanas.', estado: 'Calificado', puntuacion_calidad: 78 },
+    { id: '3', telefono: '+51 955 444 333', interes_web: 'App de Delivery', ultimo_mensaje_ia: 'Solo preguntaba precios por curiosidad.', estado: 'Cerrado', puntuacion_calidad: 45 },
+  ]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showRoleAnnouncement, setShowRoleAnnouncement] = useState(true);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'payment'>('cart');
@@ -1650,6 +1661,12 @@ export default function DemoSuite() {
                 onClick={() => { setActiveTab('gestion'); setIsSidebarOpen(false); }} 
               />
               <SidebarItem 
+                icon={LayoutList} 
+                label="CRM Admin" 
+                active={activeTab === 'crm'} 
+                onClick={() => { setActiveTab('crm'); setIsSidebarOpen(false); }} 
+              />
+              <SidebarItem 
                 icon={Package} 
                 label="Inventario" 
                 active={activeTab === 'inventario'} 
@@ -1730,6 +1747,75 @@ export default function DemoSuite() {
               {activeTab === 'asistente' && <AsistenteView />}
               {activeTab === 'inventario' && <InventarioView />}
               {activeTab === 'configuracion' && <ConfiguracionView />}
+          {activeTab === 'crm' && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <DemoGuide 
+                title="CRM Admin: El Cierre Maestro"
+                description="Aquí es donde MarIA te entrega el trabajo listo. Los prospectos se califican automáticamente por IA y se ordenan por calidad. Tu única tarea es hacer clic en el enlace de WhatsApp y cerrar el contrato."
+                steps={[
+                  "MarIA califica al prospecto en tiempo real",
+                  "Los prospectos calientes (>80) resaltan en verde",
+                  "Un clic te lleva directo al cierre en WhatsApp"
+                ]}
+                color="primary"
+              />
+              <div className="bg-white border border-gray-100 rounded-[30px] lg:rounded-[40px] overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-gray-50 bg-gray-50/30">
+                        <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Prospecto</th>
+                        <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Interés / IA</th>
+                        <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Calidad</th>
+                        <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Estado</th>
+                        <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {crmProspectos.map((p) => (
+                        <tr key={p.id} className={`transition-all hover:bg-gray-50/50 ${p.estado === 'Cerrado' ? 'opacity-50 grayscale' : ''}`}>
+                          <td className="p-6">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                <PhoneIcon className="w-4 h-4 text-gray-400" />
+                              </div>
+                              <div className="text-sm font-black text-text-main">{p.telefono}</div>
+                            </div>
+                          </td>
+                          <td className="p-6">
+                            <div className="text-xs font-bold text-primary mb-1">{p.interes_web}</div>
+                            <div className="text-[10px] text-text-muted italic line-clamp-1">"{p.ultimo_mensaje_ia}"</div>
+                          </td>
+                          <td className="p-6">
+                            <div className="flex items-center gap-2">
+                              <div className={`text-lg font-black ${p.puntuacion_calidad > 80 ? 'text-green-500' : 'text-text-main'}`}>
+                                {p.puntuacion_calidad}
+                              </div>
+                              <TrendingUpIcon className={`w-4 h-4 ${p.puntuacion_calidad > 80 ? 'text-green-500' : 'text-gray-300'}`} />
+                            </div>
+                          </td>
+                          <td className="p-6">
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl border ${
+                              p.estado === 'Cerrado' ? 'bg-gray-100 text-gray-400 border-gray-200' :
+                              p.estado === 'Nuevo' && p.puntuacion_calidad > 80 ? 'bg-green-500/10 text-green-600 border-green-500/20' :
+                              'bg-primary/5 text-primary border-primary/10'
+                            }`}>
+                              {p.estado}
+                            </span>
+                          </td>
+                          <td className="p-6">
+                            <button className="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center hover:scale-110 transition-all shadow-lg shadow-green-500/20">
+                              <ExternalLink className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
             </motion.div>
           </AnimatePresence>
         </div>
