@@ -1491,10 +1491,6 @@ export default function DemoSuite() {
 
   // Handle role change and set default tab for each role
   const handleRoleChange = (role: 'cliente' | 'emprendedor') => {
-    if (role === 'emprendedor' && activeRole !== 'emprendedor') {
-      setShowPasswordModal(true);
-      return;
-    }
     setActiveRole(role);
     setActiveTab(role === 'cliente' ? 'tienda' : 'gestion');
     setIsSidebarOpen(false);
@@ -1502,12 +1498,10 @@ export default function DemoSuite() {
 
   const verifyPassword = () => {
     if (passwordInput === 'Admin2702') {
-      setActiveRole('emprendedor');
-      setActiveTab('gestion');
+      setActiveTab('crm');
       setShowPasswordModal(false);
       setPasswordInput('');
       setPasswordError(false);
-      setIsSidebarOpen(false);
     } else {
       setPasswordError(true);
       setTimeout(() => setPasswordError(false), 2000);
@@ -1751,7 +1745,12 @@ export default function DemoSuite() {
                 icon={LayoutList} 
                 label="CRM Admin" 
                 active={activeTab === 'crm'} 
-                onClick={() => { setActiveTab('crm'); setIsSidebarOpen(false); }} 
+                onClick={() => { 
+                  if (activeTab !== 'crm') {
+                    setShowPasswordModal(true);
+                  }
+                  setIsSidebarOpen(false); 
+                }} 
               />
               <SidebarItem 
                 icon={Package} 
@@ -1838,7 +1837,7 @@ export default function DemoSuite() {
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <DemoGuide 
                 title="CRM Admin: El Cierre Maestro"
-                description="Aquí es donde MarIA te entrega el trabajo listo. Los prospectos se califican automáticamente por IA y se ordenan por calidad. Tu única tarea es hacer clic en el enlace de WhatsApp y cerrar el contrato."
+                description="Aquí es donde MarIA te entrega el trabajo listo. Los prospectos se califican automáticamente por IA y se ordenan por calidad. Tu única tarea es hacer clic en el enlace de WhatsApp y cerrar el contrato. Acceso protegido para tu seguridad."
                 steps={[
                   "MarIA califica al prospecto en tiempo real",
                   "Los prospectos calientes (>80) resaltan en verde",
